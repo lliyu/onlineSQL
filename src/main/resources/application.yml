@@ -9,3 +9,8 @@ spring:
     password: 123456
   jackson:
     default-property-inclusion: non_null #返回时过滤掉null
+  thymeleaf:
+    prefix: classpath:/templates
+    enabled: false
+    encoding: utf-8
+    mode: HTML

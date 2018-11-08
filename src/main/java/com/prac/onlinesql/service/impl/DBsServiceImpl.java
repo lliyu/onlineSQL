@@ -3,6 +3,7 @@ package com.prac.onlinesql.service.impl;
 import com.prac.onlinesql.dao.DBsDao;
 import com.prac.onlinesql.entity.DBs;
 import com.prac.onlinesql.service.DBsService;
+import com.prac.onlinesql.vo.TableVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ public class DBsServiceImpl implements DBsService {
     }
 
     @Override
-    public List<DBs> getTables() throws SQLException {
+    public List<TableVO> getTables() throws SQLException {
         return dBsDao.getTables();
     }
 }
