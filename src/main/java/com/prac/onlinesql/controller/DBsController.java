@@ -1,17 +1,13 @@
 package com.prac.onlinesql.controller;
 
-import com.prac.onlinesql.entity.DBs;
 import com.prac.onlinesql.service.DBsService;
 import com.prac.onlinesql.util.result.ListResponse;
-import com.prac.onlinesql.vo.TableVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * @Auther: liyu
