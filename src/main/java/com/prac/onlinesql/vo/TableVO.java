@@ -14,7 +14,7 @@ public class TableVO {
 
     private String engine;
 
-    private int rows;
+        private int rows;
 
     public String getDbName() {
         return dbName;

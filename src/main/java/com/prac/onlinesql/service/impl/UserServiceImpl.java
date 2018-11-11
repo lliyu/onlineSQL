@@ -23,6 +23,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void insert() throws Exception {
         userDao.insert();
+//        userDao.insertD();
 //        throw new RuntimeException();
     }
 }

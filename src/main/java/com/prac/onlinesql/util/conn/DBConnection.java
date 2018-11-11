@@ -16,7 +16,7 @@ public class DBConnection {
 //    @Value("${spring.datasource.username}")
     private static String username = "root";
 //    @Value("${spring.datasource.password}")
-    private static String password = "root";
+    private static String password = "123456";
 
     public static Connection getConnection(){
         Connection connection = null;

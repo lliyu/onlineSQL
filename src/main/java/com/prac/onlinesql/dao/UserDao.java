@@ -38,4 +38,16 @@ public class UserDao {
             e.printStackTrace();
         }
     }
+
+
+    public void insertD() throws SQLException {
+        Connection connection = DBConnection.getConnection();
+        PreparedStatement statement = null;
+        connection.setAutoCommit(false);
+        statement = connection.prepareStatement("INSERT INTO `tb_dict`(dict,type) VALUES (?, ?)");
+        statement.setString(1,"Test");
+        statement.setInt(2,1);
+        statement.execute();
+        int i = 1/0;
+    }
 }

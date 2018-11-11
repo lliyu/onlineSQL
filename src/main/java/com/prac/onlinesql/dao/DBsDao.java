@@ -2,6 +2,7 @@ package com.prac.onlinesql.dao;
 
 import com.prac.onlinesql.entity.DBs;
 import com.prac.onlinesql.entity.Table;
+import com.prac.onlinesql.qo.BaseQO;
 import com.prac.onlinesql.util.conn.DBConnection;
 import com.prac.onlinesql.vo.TableVO;
 import org.springframework.stereotype.Component;
@@ -46,15 +47,17 @@ public class DBsDao {
         return list;
     }
 
-    public List<TableVO> getTables() throws SQLException {
+    public List<TableVO> getTables(BaseQO qo) throws SQLException {
         List<DBs> dBs = getDBs();
         Connection connection = DBConnection.getConnection();
         PreparedStatement statement = null;
         List<TableVO> tables = new LinkedList<>();
         for(DBs db:dBs){
             try {
-                statement = connection.prepareStatement("select `table_name`,`table_type`,`engine`,`table_rows` from tables where `table_schema` = ?");
+                statement = connection.prepareStatement("select `table_name`,`table_type`,`engine`,`table_rows` from tables where `table_schema` = ? limit ?,?");
                 statement.setString(1, db.getDbName());
+                statement.setInt(2, (qo.getPage()-1)*qo.getLimit());
+                statement.setInt(3, qo.getLimit());
                 ResultSet resultSet = statement.executeQuery();
                 while(resultSet.next()){
                     String tableName = resultSet.getString(1);

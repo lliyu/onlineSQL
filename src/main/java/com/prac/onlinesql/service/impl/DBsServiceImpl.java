@@ -2,6 +2,8 @@ package com.prac.onlinesql.service.impl;
 
 import com.prac.onlinesql.dao.DBsDao;
 import com.prac.onlinesql.entity.DBs;
+import com.prac.onlinesql.mapper.TableMapper;
+import com.prac.onlinesql.qo.BaseQO;
 import com.prac.onlinesql.service.DBsService;
 import com.prac.onlinesql.vo.TableVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +23,16 @@ public class DBsServiceImpl implements DBsService {
     @Autowired
     private DBsDao dBsDao;
 
+    @Autowired
+    private TableMapper tableMapper;
+
     @Override
     public List<DBs> getDBs() throws SQLException {
         return dBsDao.getDBs();
     }
 
     @Override
-    public List<TableVO> getTables() throws SQLException {
-        return dBsDao.getTables();
+    public List<TableVO> getTables(BaseQO qo) throws SQLException {
+        return tableMapper.getTable(qo);
     }
 }
