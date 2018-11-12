@@ -9,5 +9,8 @@ import java.util.List;
 
 public interface DBsService {
     List<DBs> getDBs() throws SQLException;
+
     List<TableVO> getTables(BaseQO qo) throws SQLException;
+
+    long queryTableTotal(BaseQO qo);
 }

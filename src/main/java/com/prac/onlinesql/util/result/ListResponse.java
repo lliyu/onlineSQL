@@ -11,13 +11,24 @@ public class ListResponse extends ResponseData {
 
     private List data;
 
+    private long count;
+
     public ListResponse(int code, String message) {
         super(code, message);
     }
 
-    public ListResponse(int code, String message, List data) {
+    public ListResponse(int code, String message, List data, long count) {
         super(code, message);
         this.data = data;
+        this.count = count;
+    }
+
+    public long getCount() {
+        return count;
+    }
+
+    public void setCount(long count) {
+        this.count = count;
     }
 
     public List getData() {

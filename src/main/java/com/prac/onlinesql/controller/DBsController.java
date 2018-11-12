@@ -28,7 +28,7 @@ public class DBsController {
      */
     @RequestMapping(value = "/dbs/list", method =RequestMethod.GET)
     public ListResponse getDBs() throws SQLException {
-        return new ListResponse(0, "", dBsService.getDBs());
+        return new ListResponse(0, "", dBsService.getDBs(), 0);
     }
 
     /**
@@ -38,6 +38,6 @@ public class DBsController {
      */
     @RequestMapping(value = "/dbs/tables", method =RequestMethod.GET)
     public ListResponse tables(BaseQO qo) throws SQLException {
-        return new ListResponse(0, "",dBsService.getTables(qo));
+        return new ListResponse(0, "",dBsService.getTables(qo), dBsService.queryTableTotal(qo));
     }
 }

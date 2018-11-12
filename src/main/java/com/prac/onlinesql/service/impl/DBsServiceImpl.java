@@ -35,4 +35,9 @@ public class DBsServiceImpl implements DBsService {
     public List<TableVO> getTables(BaseQO qo) throws SQLException {
         return tableMapper.getTable(qo);
     }
+
+    @Override
+    public long queryTableTotal(BaseQO qo) {
+        return tableMapper.queryTableTotal(qo);
+    }
 }
