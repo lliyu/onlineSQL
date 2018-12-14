@@ -7,12 +7,12 @@ import java.util.List;
 
 /**
  * 接口描述:
- * 作者: 李宇
+ * 作者: ly
  * 创建时间:16:38 2018/11/11
  **/
 public interface TableMapper {
 
     List<TableVO> getTable(BaseQO qo);
 
-    int queryTableTotal(BaseQO qo);
+    long queryTableTotal(BaseQO qo);
 }
