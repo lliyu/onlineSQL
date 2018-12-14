@@ -12,9 +12,9 @@
 			`table_rows` rows
 		FROM
 			TABLES
-		<if test="dbName != null">
-			WHERE `TABLE_SCHEMA` = #{dbName}
-		</if>
+		<!--<if test="dbName != null">-->
+			<!--WHERE `TABLE_SCHEMA` = #{dbName}-->
+		<!--</if>-->
 		limit #{page},#{limit}
 	</select>
 	
@@ -23,38 +23,38 @@
 			count(1)
 		FROM
 			TABLES
-		<if test="dbName != null">
-			WHERE `TABLE_SCHEMA` = #{dbName}
-		</if>
+		<!--<if test="dbName != null">-->
+			<!--WHERE `TABLE_SCHEMA` = #{dbName}-->
+		<!--</if>-->
 	</select>
 	 
-	<insert id="save" parameterType="io.renren.entity.SysOssEntity" useGeneratedKeys="true" keyProperty="id">
-		insert into sys_oss
-		(
-			`url`, 
-			`create_date`
-		)
-		values
-		(
-			#{url}, 
-			#{createDate}
-		)
-	</insert>
-	 
-	<update id="update" parameterType="io.renren.entity.SysOssEntity">
-		update sys_oss 
-		<set>
-			<if test="url != null">`url` = #{url}, </if>
-			<if test="createDate != null">`create_date` = #{createDate}</if>
-		</set>
-		where id = #{id}
-	</update>
-	
-	<delete id="deleteBatch">
-		delete from sys_oss where id in 
-		<foreach item="id" collection="array" open="(" separator="," close=")">
-			#{id}
-		</foreach>
-	</delete>
+	<!--<insert id="save" parameterType="io.renren.entity.SysOssEntity" useGeneratedKeys="true" keyProperty="id">-->
+		<!--insert into sys_oss-->
+		<!--(-->
+			<!--`url`, -->
+			<!--`create_date`-->
+		<!--)-->
+		<!--values-->
+		<!--(-->
+			<!--#{url}, -->
+			<!--#{createDate}-->
+		<!--)-->
+	<!--</insert>-->
+	 <!---->
+	<!--<update id="update" parameterType="io.renren.entity.SysOssEntity">-->
+		<!--update sys_oss -->
+		<!--<set>-->
+			<!--<if test="url != null">`url` = #{url}, </if>-->
+			<!--<if test="createDate != null">`create_date` = #{createDate}</if>-->
+		<!--</set>-->
+		<!--where id = #{id}-->
+	<!--</update>-->
+	<!---->
+	<!--<delete id="deleteBatch">-->
+		<!--delete from sys_oss where id in -->
+		<!--<foreach item="id" collection="array" open="(" separator="," close=")">-->
+			<!--#{id}-->
+		<!--</foreach>-->
+	<!--</delete>-->
 
 </mapper>
