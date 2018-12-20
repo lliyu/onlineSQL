@@ -18,7 +18,7 @@ import java.sql.SQLException;
 public class UserDao {
 
     public void insert()  {
-        Connection connection = DBConnection.getConnection();
+        Connection connection = DBConnection.getConnection(null);
         PreparedStatement statement = null;
         try {
             connection.setAutoCommit(false);
@@ -28,7 +28,6 @@ public class UserDao {
             statement.execute();
             int i = 1/0;
             connection.commit();
-            connection.close();
         } catch (SQLException e) {
             try {
                 connection.rollback();
@@ -41,7 +40,7 @@ public class UserDao {
 
 
     public void insertD() throws SQLException {
-        Connection connection = DBConnection.getConnection();
+        Connection connection = DBConnection.getConnection(null);
         PreparedStatement statement = null;
         connection.setAutoCommit(false);
         statement = connection.prepareStatement("INSERT INTO `tb_dict`(dict,type) VALUES (?, ?)");

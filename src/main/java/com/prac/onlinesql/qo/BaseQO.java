@@ -6,22 +6,22 @@ package com.prac.onlinesql.qo;
  **/
 public class BaseQO {
 
-    private int page;
-    private int limit;
+    private Integer page;
+    private Integer limit;
 
-    public int getPage() {
+    public Integer getPage() {
         return page;
     }
 
-    public void setPage(int page) {
+    public void setPage(Integer page) {
         this.page = page;
     }
 
-    public int getLimit() {
+    public Integer getLimit() {
         return limit;
     }
 
-    public void setLimit(int limit) {
+    public void setLimit(Integer limit) {
         this.limit = limit;
     }
 }

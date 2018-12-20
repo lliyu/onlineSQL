@@ -1,7 +1,10 @@
 package com.prac.onlinesql.util.conn;
 
+import com.prac.onlinesql.qo.DBsQO;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.text.MessageFormat;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,7 +21,9 @@ public class DBConnection {
 
     private static String dirver = "com.mysql.jdbc.Driver";
     //    @Value("${spring.datasource.url}")
-    private static String url = "jdbc:mysql://localhost:3306/information_schema?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8";
+    private static String url = "jdbc:mysql://{0}:3306/{1}";
+
+    private static String param = "?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8";
     //    @Value("${spring.datasource.username}")
     private static String username = "root";
     //    @Value("${spring.datasource.password}")
@@ -29,17 +34,24 @@ public class DBConnection {
         try {
             Class.forName(dirver);
             connection = DriverManager.getConnection(url,username,password);
-            connectionMap.put("information_schema", connection);
+            connectionMap.put("127.0.0.1:information_schema", connection);
         }  catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static Connection getConnection(){
+    public static Connection getConnection(DBsQO qo){
+        String key = qo.getIp() + ":" + qo.getDbName();
+        if(connectionMap.containsKey(key)){
+            return connectionMap.get(key);
+        }
+        url = MessageFormat.format(DBConnection.url, qo.getIp(), qo.getDbName());
 
         try {
             Class.forName(dirver);
-            connection = DriverManager.getConnection(url,username,password);
+            DBConnection.url = String.format(DBConnection.url,qo.getIp(),qo.getDbName());
+            connection = DriverManager.getConnection(url + param,username,password);
+            connectionMap.put(key, connection);
         }  catch (Exception e) {
             e.printStackTrace();
         }

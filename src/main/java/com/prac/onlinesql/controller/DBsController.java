@@ -1,6 +1,6 @@
 package com.prac.onlinesql.controller;
 
-import com.prac.onlinesql.qo.BaseQO;
+import com.prac.onlinesql.qo.DBsQO;
 import com.prac.onlinesql.service.DBsService;
 import com.prac.onlinesql.util.result.ListResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +27,8 @@ public class DBsController {
      * @throws SQLException
      */
     @RequestMapping(value = "/dbs/list", method =RequestMethod.GET)
-    public ListResponse getDBs() throws SQLException {
-        return new ListResponse(0, "", dBsService.getDBs(), 0);
+    public ListResponse getDBs(DBsQO qo) throws SQLException {
+        return new ListResponse(0, "", dBsService.getDBs(qo), 0);
     }
 
     /**
@@ -37,7 +37,7 @@ public class DBsController {
      * @throws SQLException
      */
     @RequestMapping(value = "/dbs/tables", method =RequestMethod.GET)
-    public ListResponse tables(BaseQO qo) throws SQLException {
+    public ListResponse tables(DBsQO qo) throws SQLException {
         return new ListResponse(0, "",dBsService.getTables(qo), dBsService.queryTableTotal(qo));
     }
 }

@@ -12,10 +12,11 @@
 			`table_rows` rows
 		FROM
 			TABLES
-		<!--<if test="dbName != null">-->
-			<!--WHERE `TABLE_SCHEMA` = #{dbName}-->
-		<!--</if>-->
-		limit #{page},#{limit}
+		<if test="page != null and limit != null">
+-- 			WHERE `TABLE_SCHEMA` = #{dbName}
+			limit #{page},#{limit}
+		</if>
+
 	</select>
 	
  	<select id="queryTableTotal" resultType="long">
