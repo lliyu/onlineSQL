@@ -21,8 +21,8 @@ spring:
     testOnReturn: false
     poolPreparedStatements: true
     maxOpenPreparedStatements: 20
-  jackson:
-    default-property-inclusion: non_null #返回时过滤掉null
+#  jackson:
+#    default-property-inclusion: non_null #返回时过滤掉null
   thymeleaf:
     prefix: classpath:/templates
     enabled: false

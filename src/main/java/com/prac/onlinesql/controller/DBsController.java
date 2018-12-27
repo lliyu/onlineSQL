@@ -1,6 +1,7 @@
 package com.prac.onlinesql.controller;
 
 import com.prac.onlinesql.qo.DBsQO;
+import com.prac.onlinesql.qo.SelectQO;
 import com.prac.onlinesql.service.DBsService;
 import com.prac.onlinesql.util.result.ListResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,12 @@ public class DBsController {
      */
     @RequestMapping(value = "/dbs/tables", method =RequestMethod.GET)
     public ListResponse tables(DBsQO qo) throws SQLException {
-        return new ListResponse(0, "",dBsService.getTables(qo), dBsService.queryTableTotal(qo));
+        return new ListResponse(0, "",dBsService.getTablesJson(qo), 0);
+//        return new ListResponse(0, "",dBsService.getDBs(qo), 0);
+    }
+
+    @RequestMapping(value = "/dbs/select", method =RequestMethod.GET)
+    public ListResponse select(SelectQO qo) throws SQLException {
+        return new ListResponse(0, "",dBsService.select(qo), 0);
     }
 }

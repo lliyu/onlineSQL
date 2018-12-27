@@ -7,8 +7,6 @@ package com.prac.onlinesql.qo;
  */
 public class DBsQO extends DBConnectionQO {
 
-    private String dbName;
-
     private String tableName;
 
     public String getTableName() {
@@ -19,11 +17,4 @@ public class DBsQO extends DBConnectionQO {
         this.tableName = tableName;
     }
 
-    public String getDbName() {
-        return dbName;
-    }
-
-    public void setDbName(String dbName) {
-        this.dbName = dbName;
-    }
 }

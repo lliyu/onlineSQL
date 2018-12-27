@@ -11,6 +11,15 @@ public class DBConnectionQO extends BaseQO {
     private String ip;
     private String username;
     private String password;
+    private String dbName;
+
+    public String getDbName() {
+        return dbName;
+    }
+
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+    }
 
     public String getDbType() {
         return dbType;

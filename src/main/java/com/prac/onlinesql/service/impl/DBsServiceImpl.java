@@ -5,6 +5,7 @@ import com.prac.onlinesql.entity.DBs;
 import com.prac.onlinesql.mapper.TableMapper;
 import com.prac.onlinesql.qo.BaseQO;
 import com.prac.onlinesql.qo.DBsQO;
+import com.prac.onlinesql.qo.SelectQO;
 import com.prac.onlinesql.service.DBsService;
 import com.prac.onlinesql.vo.TableVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,18 @@ public class DBsServiceImpl implements DBsService {
 
     @Override
     public List<TableVO> getTables(DBsQO qo) throws SQLException {
+//        return dBsDao.getTables(qo);
+        return null;
+    }
+
+    @Override
+    public List<Object> getTablesJson(DBsQO qo) {
         return dBsDao.getTables(qo);
+    }
+
+    @Override
+    public List<Object> select(SelectQO qo) {
+        return dBsDao.select(qo);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.prac.onlinesql.util.conn;
 
+import com.prac.onlinesql.qo.DBConnectionQO;
 import com.prac.onlinesql.qo.DBsQO;
 
 import java.sql.Connection;
@@ -40,17 +41,15 @@ public class DBConnection {
         }
     }
 
-    public static Connection getConnection(DBsQO qo){
+    public static Connection getConnection(DBConnectionQO qo){
         String key = qo.getIp() + ":" + qo.getDbName();
         if(connectionMap.containsKey(key)){
             return connectionMap.get(key);
         }
-        url = MessageFormat.format(DBConnection.url, qo.getIp(), qo.getDbName());
-
+        String currUrl = MessageFormat.format(url, qo.getIp(), qo.getDbName());
         try {
             Class.forName(dirver);
-            DBConnection.url = String.format(DBConnection.url,qo.getIp(),qo.getDbName());
-            connection = DriverManager.getConnection(url + param,username,password);
+            connection = DriverManager.getConnection(currUrl + param,username,password);
             connectionMap.put(key, connection);
         }  catch (Exception e) {
             e.printStackTrace();
