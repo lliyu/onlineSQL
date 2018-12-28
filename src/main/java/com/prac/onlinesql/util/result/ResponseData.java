@@ -7,6 +7,8 @@ package com.prac.onlinesql.util.result;
  */
 public class ResponseData {
 
+    private Object data;
+
     private int code;
 
     private String Message;
@@ -14,6 +16,20 @@ public class ResponseData {
     public ResponseData(int code, String message) {
         this.code = code;
         Message = message;
+    }
+
+    public ResponseData(Object data, int code, String message) {
+        this.data = data;
+        this.code = code;
+        Message = message;
+    }
+
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
     }
 
     public int getCode() {

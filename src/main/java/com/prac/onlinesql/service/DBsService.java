@@ -12,9 +12,9 @@ import java.util.List;
 public interface DBsService {
     List<DBs> getDBs(DBsQO qo) throws SQLException;
 
-    List<TableVO> getTables(DBsQO qo) throws SQLException;
-    List<Object> getTablesJson(DBsQO qo);
+    List<String> getTables(DBsQO qo) throws SQLException;
+    List<Object> getRows(DBsQO qo);
     List<Object> select(SelectQO qo);
 
-    long queryTableTotal(BaseQO qo);
+    long queryTableTotal(DBsQO qo) throws SQLException;
 }

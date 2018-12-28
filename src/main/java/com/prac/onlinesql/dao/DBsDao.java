@@ -6,6 +6,7 @@ import com.prac.onlinesql.entity.Table;
 import com.prac.onlinesql.qo.BaseQO;
 import com.prac.onlinesql.qo.DBsQO;
 import com.prac.onlinesql.qo.SelectQO;
+import com.prac.onlinesql.util.DateUtils;
 import com.prac.onlinesql.util.bean.DynamicBean;
 import com.prac.onlinesql.util.conn.DBConnection;
 import com.prac.onlinesql.vo.TableVO;
@@ -47,7 +48,7 @@ public class DBsDao {
         return list;
     }
 
-    public List<Object> getTables(DBsQO qo) {
+    public List<Object> getRows(DBsQO qo) {
         String sql = "select * from {0}";
         sql = MessageFormat.format(sql, qo.getTableName());
         StringBuilder sb = new StringBuilder(sql);
@@ -87,6 +88,29 @@ public class DBsDao {
         return rows;
     }
 
+    public long queryTableTotal(DBsQO qo) throws SQLException {
+        String sql = "select count(1) from {0}";
+        sql = MessageFormat.format(sql, qo.getTableName());
+        StringBuilder sb = new StringBuilder(sql);
+        Connection connection = DBConnection.getConnection(qo);
+        PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet resultSet = statement.executeQuery();
+        resultSet.next();
+        return resultSet.getInt(1);
+    }
+
+    public List<String> getTables(DBsQO qo) throws SQLException {
+        StringBuilder sb = new StringBuilder("show tables");
+        Connection connection = DBConnection.getConnection(qo);
+        PreparedStatement statement = connection.prepareStatement(sb.toString());
+        ResultSet resultSet = statement.executeQuery();
+        List<String> tables = new ArrayList<>();
+        while (resultSet.next()){
+            tables.add(resultSet.getString(1));
+        }
+        return tables;
+    }
+
     private void findAndPretty(List<Object> rows, PreparedStatement statement) throws SQLException {
         //execute如果返回了结果集 则返回的值为true 表示select操作
         //如果返回为false 则表示ddl操作
@@ -121,7 +145,8 @@ public class DBsDao {
                         jsonObject.put(columnName, rs.getInt(columnName));
                         break;
                     case Types.TIMESTAMP:
-                        jsonObject.put(columnName, rs.getTimestamp(columnName));
+                        String time = DateUtils.parseDate(rs.getTimestamp(columnName));
+                        jsonObject.put(columnName, time);
                         break;
                     case Types.TIME:
                         jsonObject.put(columnName, rs.getTime(columnName));

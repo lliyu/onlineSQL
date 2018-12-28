@@ -34,14 +34,13 @@ public class DBsServiceImpl implements DBsService {
     }
 
     @Override
-    public List<TableVO> getTables(DBsQO qo) throws SQLException {
-//        return dBsDao.getTables(qo);
-        return null;
+    public List<String> getTables(DBsQO qo) throws SQLException {
+        return dBsDao.getTables(qo);
     }
 
     @Override
-    public List<Object> getTablesJson(DBsQO qo) {
-        return dBsDao.getTables(qo);
+    public List<Object> getRows(DBsQO qo) {
+        return dBsDao.getRows(qo);
     }
 
     @Override
@@ -50,7 +49,7 @@ public class DBsServiceImpl implements DBsService {
     }
 
     @Override
-    public long queryTableTotal(BaseQO qo) {
-        return tableMapper.queryTableTotal(qo);
+    public long queryTableTotal(DBsQO qo) throws SQLException {
+        return dBsDao.queryTableTotal(qo);
     }
 }
