@@ -58,12 +58,12 @@ public class DBsController {
 
     @RequestMapping(value = "/dbs/select", method =RequestMethod.GET)
     public ListResponse select(SelectQO qo) throws SQLException {
-        return new ListResponse(0, "", dBsService.select(qo), 0);
+        return new ListResponse(200, "", dBsService.select(qo), 0);
     }
 
     @RequestMapping(value = "/dbs/format", method =RequestMethod.GET)
     public ResponseData format(String sql) {
         String res = SQLUtils.formatMySql(sql);
-        return new ResponseData(res, 0, "");
+        return new ResponseData(res, 200, "");
     }
 }

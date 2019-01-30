@@ -39,12 +39,12 @@ public class DBsServiceImpl implements DBsService {
     }
 
     @Override
-    public List<Object> getRows(DBsQO qo) {
+    public List<Object> getRows(DBsQO qo) throws SQLException {
         return dBsDao.getRows(qo);
     }
 
     @Override
-    public List<Object> select(SelectQO qo) {
+    public List<Object> select(SelectQO qo) throws SQLException {
         return dBsDao.select(qo);
     }
 

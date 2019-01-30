@@ -27,6 +27,6 @@ public class TableController {
      */
     @RequestMapping(value = "/dbs/table/header", method = RequestMethod.GET)
     public ListResponse header(DBsQO qo) throws SQLException {
-        return new ListResponse(0,"", tableService.getHeader(qo), 0);
+        return new ListResponse(200,"", tableService.getHeader(qo), 0);
     }
 }
