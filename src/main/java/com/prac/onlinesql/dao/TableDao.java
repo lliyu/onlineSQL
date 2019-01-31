@@ -38,4 +38,13 @@ public class TableDao {
         }
         return header;
     }
+
+    public List<String> getForeigns(DBsQO qo) {
+
+        return null;
+    }
+
+    public List<String> getIndexs(DBsQO qo) {
+        return null;
+    }
 }
