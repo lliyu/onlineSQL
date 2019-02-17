@@ -28,6 +28,10 @@ spring:
     enabled: false
     encoding: utf-8
     mode: HTML
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
 mybatis:
   mapper-locations: classpath:mapping/*.xml
   type-aliases-package: com.prac.onlinesql.mapper

@@ -29,26 +29,19 @@ public class DBsDao {
         Connection connection = DBConnection.getConnection(qo);
         List<DBs> list = null;
         PreparedStatement statement = null;
-        try {
-            statement = connection.prepareStatement("show databases");
-            ResultSet resultSet = statement.executeQuery();
-            list = new LinkedList<DBs>();
-            while (resultSet.next()) {
-                String db = resultSet.getString(1);
-                DBs dBs = new DBs();
-                dBs.setDbName(db);
-                list.add(dBs);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (statement != null)
-                statement.close();
+        statement = connection.prepareStatement("show databases");
+        ResultSet resultSet = statement.executeQuery();
+        list = new LinkedList<DBs>();
+        while (resultSet.next()) {
+            String db = resultSet.getString(1);
+            DBs dBs = new DBs();
+            dBs.setDbName(db);
+            list.add(dBs);
         }
         return list;
     }
 
-    public List<Object> getRows(DBsQO qo) {
+    public List<Object> getRows(DBsQO qo) throws SQLException {
         String sql = "select * from {0}";
         sql = MessageFormat.format(sql, qo.getTableName());
         StringBuilder sb = new StringBuilder(sql);
@@ -57,34 +50,28 @@ public class DBsDao {
             sb.append(" limit ?,?");
         }
         List<Object> rows = new ArrayList();
-        try (PreparedStatement statement = connection.prepareStatement(sb.toString())) {
-            if (qo.getPage() != null && qo.getLimit() != null) {
-                statement.setInt(1, (qo.getPage() - 1) * qo.getLimit());
-                statement.setInt(2, qo.getLimit());
-            }
-            findAndPretty(rows, statement);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement statement = connection.prepareStatement(sb.toString());
+        if (qo.getPage() != null && qo.getLimit() != null) {
+            statement.setInt(1, (qo.getPage() - 1) * qo.getLimit());
+            statement.setInt(2, qo.getLimit());
         }
+        findAndPretty(rows, statement);
         return rows;
     }
 
-    public List<Object> select(SelectQO qo){
+    public List<Object> select(SelectQO qo) throws SQLException {
         StringBuilder sb = new StringBuilder(qo.getSql());
         Connection connection = DBConnection.getConnection(qo);
         if (qo.getPage() != null && qo.getLimit() != null) {
             sb.append("limit ?,?");
         }
         List<Object> rows = new ArrayList();
-        try (PreparedStatement statement = connection.prepareStatement(sb.toString())) {
-            if (qo.getPage() != null && qo.getLimit() != null) {
-                statement.setInt(0, (qo.getPage() - 1) * qo.getLimit());
-                statement.setInt(1, qo.getLimit());
-            }
-            findAndPretty(rows, statement);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement statement = connection.prepareStatement(sb.toString());
+        if (qo.getPage() != null && qo.getLimit() != null) {
+            statement.setInt(0, (qo.getPage() - 1) * qo.getLimit());
+            statement.setInt(1, qo.getLimit());
         }
+        findAndPretty(rows, statement);
         return rows;
     }
 

@@ -12,4 +12,8 @@ import java.util.List;
 
 public interface TableService {
     List<ColumnVO> getHeader(DBsQO qo) throws SQLException;
+
+    List<String> getForeigns(DBsQO qo);
+
+    List<String> getIndexs(DBsQO qo);
 }

@@ -33,9 +33,18 @@ public class TableDao {
         while (resultSet.next()){
             ColumnVO column = new ColumnVO();
             column.setColumnName(resultSet.getString("column_name"));
-            column.setPrimary("pri".equals(resultSet.getString("column_key")));
+            column.setPrimary("PRI".equals(resultSet.getString("column_key")));
             header.add(column);
         }
         return header;
+    }
+
+    public List<String> getForeigns(DBsQO qo) {
+
+        return null;
+    }
+
+    public List<String> getIndexs(DBsQO qo) {
+        return null;
     }
 }

@@ -26,4 +26,14 @@ public class TableServiceImpl implements TableService {
 
         return tableDao.getHeader(qo);
     }
+
+    @Override
+    public List<String> getForeigns(DBsQO qo) {
+        return tableDao.getForeigns(qo);
+    }
+
+    @Override
+    public List<String> getIndexs(DBsQO qo) {
+        return tableDao.getIndexs(qo);
+    }
 }

@@ -13,8 +13,8 @@ public interface DBsService {
     List<DBs> getDBs(DBsQO qo) throws SQLException;
 
     List<String> getTables(DBsQO qo) throws SQLException;
-    List<Object> getRows(DBsQO qo);
-    List<Object> select(SelectQO qo);
+    List<Object> getRows(DBsQO qo) throws SQLException;
+    List<Object> select(SelectQO qo) throws SQLException;
 
     long queryTableTotal(DBsQO qo) throws SQLException;
 }
