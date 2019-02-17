@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @Auther: liyu
@@ -58,7 +59,14 @@ public class DBsController {
 
     @RequestMapping(value = "/dbs/select", method =RequestMethod.GET)
     public ListResponse select(SelectQO qo) throws SQLException {
-        return new ListResponse(0, "", dBsService.select(qo), 0);
+        ListResponse res = null;
+        try {
+            List<Object> select = dBsService.select(qo);
+            res = new ListResponse(200, "success", select, 0);
+        }catch (Exception e){
+            res = new ListResponse(201, e.getMessage(), null, 0);
+        }
+        return res;
     }
 
     @RequestMapping(value = "/dbs/format", method =RequestMethod.GET)
