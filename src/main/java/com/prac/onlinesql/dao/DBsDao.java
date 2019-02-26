@@ -10,12 +10,15 @@ import com.prac.onlinesql.util.DateUtils;
 import com.prac.onlinesql.util.bean.DynamicBean;
 import com.prac.onlinesql.util.conn.DBConnection;
 import com.prac.onlinesql.vo.TableVO;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.sql.*;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.Date;
 
 /**
  * @Auther: liyu
@@ -24,6 +27,31 @@ import java.util.*;
  */
 @Component("dBsDao")
 public class DBsDao {
+
+    private static Log log = LogFactory.getLog(DBsDao.class);
+
+    public static void insertDemo() throws SQLException {
+        DBsQO qo = new DBsQO();
+        qo.setIp("localhost");
+        qo.setDbName("fuxi");
+        Connection connection = DBConnection.getConnection(qo);
+        List<DBs> list = null;
+        PreparedStatement statement = null;
+        String sql = "insert into demo(name,age,time) values(?,?,?)";
+        Random random = new Random();
+        for(int i=0;i<200000;i++){
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, "test" + random.nextInt(100));
+            statement.setInt(2, random.nextInt(90));
+            statement.setString(3, String.valueOf(new Date().getTime()-random.nextInt(1000)));
+            boolean execute = statement.execute();
+            System.out.println(execute);
+        }
+    }
+
+    public static void main(String[] args) throws SQLException {
+        insertDemo();
+    }
 
     public List<DBs> getDBs(DBsQO qo) throws SQLException {
         Connection connection = DBConnection.getConnection(qo);

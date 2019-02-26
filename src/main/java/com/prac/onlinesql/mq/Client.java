@@ -1,6 +1,6 @@
 package com.prac.onlinesql.mq;
 
-import mq.consumer.DataConsumer;
+import com.prac.onlinesql.mq.consumer.DataConsumer;
 
 import java.io.IOException;
 import java.sql.SQLException;

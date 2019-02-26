@@ -1,6 +1,6 @@
 package com.prac.onlinesql.mq;
 
-import mq.producer.DataProducer;
+import com.prac.onlinesql.mq.producer.DataProducer;
 
 import java.io.IOException;
 import java.sql.SQLException;

@@ -1,12 +1,12 @@
 package com.prac.onlinesql.mq.producer;
 
+import com.prac.onlinesql.mq.db.DBData;
+import com.prac.onlinesql.mq.db.RemoteDBOperation;
+import com.prac.onlinesql.mq.entity.AcademicWorksEntity;
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import mq.db.DBData;
-import mq.db.RemoteDBOperation;
-import mq.entity.AcademicWorksEntity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -42,6 +42,8 @@ public class DataProducer {
         channel.queueDeclare("data_queue", false, false, true, null);
 
         channel.queueBind("data_queue", DATA_SYNC_EXCHANGE, ROUTE_KEY);
+
+        channel.confirmSelect();
 
         //判断数据表是否存在，不存在则将数据结构进行同步
         if(!RemoteDBOperation.isTableExist(tableName)){
