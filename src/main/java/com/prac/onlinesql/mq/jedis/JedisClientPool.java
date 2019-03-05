@@ -32,6 +32,23 @@ public class JedisClientPool implements JedisClient {
 	}
 
 	@Override
+	public long eval(String script, List keys, List values) {
+		Jedis jedis = jedisPool.getResource();
+		long result = (long) jedis.eval(script, keys, values);
+		jedis.close();
+		return result;
+	}
+
+
+	@Override
+	public String setLock(final String key, final String value, final long time) {
+		Jedis jedis = jedisPool.getResource();
+		String result = jedis.set(key, value, "nx", "ex", time);
+		jedis.close();
+		return result;
+	}
+
+	@Override
 	public String get(String key) {
 		Jedis jedis = jedisPool.getResource();
 		String result = jedis.get(key);

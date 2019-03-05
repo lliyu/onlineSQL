@@ -5,7 +5,12 @@ import java.util.List;
 public interface JedisClient {
 
 	String set(String key, String value);
-	String get(String key);
+
+    long eval(String script, List keys, List values);
+
+    String setLock(String key, String value, long time);
+
+    String get(String key);
 	Boolean exists(String key);
 	Long expire(String key, int seconds);
 	Long ttl(String key);
