@@ -63,38 +63,38 @@ public class DataConsumer {
                     } catch (ClassNotFoundException e) {
                         e.printStackTrace();
                     }
+                    channel.basicAck(envelope.getDeliveryTag(),false);
                 }
             };
-            channel.basicConsume(DATA_STRUCTURE_QUEUE, true, consumerStructure);
+            channel.basicConsume(DATA_STRUCTURE_QUEUE, false, consumerStructure);
         }
 
         //消费数据
-        DefaultConsumer consumerData = new DefaultConsumer(channel) {
-            @Override
-            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+        if(RemoteDBOperation.isTableExist("academic_works")){
+            DefaultConsumer consumerData = new DefaultConsumer(channel) {
+                @Override
+                public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
 
-                ByteArrayInputStream stream = new ByteArrayInputStream(body);
-                ObjectInputStream ois = new ObjectInputStream(stream);
-                try {
-                    AcademicWorksEntity academicWorksEntity = (AcademicWorksEntity) ois.readObject();
-                    //使用类名+id作为全局唯一ID 保证消息不会重复消费
-                    String key = academicWorksEntity.getClass().getName() + ":" + academicWorksEntity.getId();
-                    if(jedisClientPool.get(key)==null){
-                        RemoteDBOperation.insertData(academicWorksEntity);
-                        jedisClientPool.set(key, String.valueOf(academicWorksEntity.getId()));
+                    ByteArrayInputStream stream = new ByteArrayInputStream(body);
+                    ObjectInputStream ois = new ObjectInputStream(stream);
+                    try {
+                        AcademicWorksEntity academicWorksEntity = (AcademicWorksEntity) ois.readObject();
+                        //使用类名+id作为全局唯一ID 保证消息不会重复消费
+                        String key = academicWorksEntity.getClass().getName() + ":" + academicWorksEntity.getId();
+                        if(jedisClientPool.get(key)==null){
+                            RemoteDBOperation.insertData(academicWorksEntity);
+                            jedisClientPool.set(key, String.valueOf(academicWorksEntity.getId()));
+                        }
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
                     }
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                    channel.basicAck(envelope.getDeliveryTag(),false);
                 }
-
-
-                System.out.println(properties.getCorrelationId());
-
-            }
-        };
-        channel.basicConsume(DATA_QUEUE, true, consumerData);
+            };
+            channel.basicConsume(DATA_QUEUE, false, consumerData);
+        }
 
     }
 }

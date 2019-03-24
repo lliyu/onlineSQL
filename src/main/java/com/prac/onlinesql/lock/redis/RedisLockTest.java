@@ -12,10 +12,11 @@ public class RedisLockTest {
     private static RedisLock lock = new RedisLock();
 
     public static void main(String[] args) {
-        Thread thread1 = new Thread(new LockTest());
-        Thread thread2 = new Thread(new LockTest());
-        thread1.start();
-        thread2.start();
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        for(int i=0;i<10;i++){
+            executorService.execute(new LockTest());
+        }
+        executorService.shutdown();
     }
 
     static class LockTest implements Runnable{

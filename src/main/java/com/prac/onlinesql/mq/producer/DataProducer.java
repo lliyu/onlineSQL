@@ -43,7 +43,7 @@ public class DataProducer {
 
         channel.queueBind("data_queue", DATA_SYNC_EXCHANGE, ROUTE_KEY);
 
-        channel.confirmSelect();
+        channel.confirmSelect();//设置为confirm模式
 
         //判断数据表是否存在，不存在则将数据结构进行同步
         if(!RemoteDBOperation.isTableExist(tableName)){
@@ -63,9 +63,15 @@ public class DataProducer {
                 oos.writeObject(entity);
                 byte[] bytes = stream.toByteArray();
 
-
                 channel.basicPublish(DATA_SYNC_EXCHANGE, ROUTE_KEY, null, bytes);
+                if(channel.waitForConfirms()){
+                    //数据推送成功 修改本地消息表中的状态
+                    System.out.println("消息推送成功");
+                    //DBData.updateStatus(entity,"confirm");
+                }
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });
