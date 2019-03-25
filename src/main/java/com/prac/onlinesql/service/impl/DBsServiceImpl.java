@@ -39,7 +39,7 @@ public class DBsServiceImpl implements DBsService {
     }
 
     @Override
-    public List<Object> getRows(DBsQO qo) throws SQLException {
+    public List<Object> getRows(DBsQO qo) throws SQLException, InterruptedException {
         return dBsDao.getRows(qo);
     }
 

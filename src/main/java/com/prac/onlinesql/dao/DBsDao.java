@@ -7,6 +7,7 @@ import com.prac.onlinesql.qo.BaseQO;
 import com.prac.onlinesql.qo.DBsQO;
 import com.prac.onlinesql.qo.SelectQO;
 import com.prac.onlinesql.util.DateUtils;
+import com.prac.onlinesql.util.Status;
 import com.prac.onlinesql.util.bean.DynamicBean;
 import com.prac.onlinesql.util.conn.DBConnection;
 import com.prac.onlinesql.vo.TableVO;
@@ -33,24 +34,93 @@ public class DBsDao {
     public static void insertDemo() throws SQLException {
         DBsQO qo = new DBsQO();
         qo.setIp("localhost");
-        qo.setDbName("fuxi");
+        qo.setDbName("db1");
         Connection connection = DBConnection.getConnection(qo);
         List<DBs> list = null;
         PreparedStatement statement = null;
-        String sql = "insert into demo(name,age,time) values(?,?,?)";
+        String sql = "insert into t_order_0(id,user_id,price,status) values(?,?,?,?)";
         Random random = new Random();
-        for(int i=0;i<200000;i++){
+        Status[] values = Status.values();
+        for(int i=0;i<2000;i++){
             statement = connection.prepareStatement(sql);
-            statement.setString(1, "test" + random.nextInt(100));
-            statement.setInt(2, random.nextInt(90));
-            statement.setString(3, String.valueOf(new Date().getTime()-random.nextInt(1000)));
+            statement.setString(1, "test" + i);
+            statement.setInt(2, i);
+            statement.setInt(3, random.nextInt(1000));
+            statement.setString(4, values[random.nextInt(2)].getStatus());
             boolean execute = statement.execute();
-            System.out.println(execute);
         }
     }
 
+    public static void copyTable() throws SQLException {
+        DBsQO qo = new DBsQO();
+        qo.setIp("localhost");
+        qo.setDbName("db1");
+        PreparedStatement statement = null;
+        Connection connection = DBConnection.getConnection(qo);
+        List<DBs> list = null;
+        for(int i=1001;i<5000;i++){
+            String sql = "create table t_order_" + i + " like t_order_0";
+            statement = connection.prepareStatement(sql);
+            statement.execute();
+
+            sql = "insert into t_order_" + i + " select * from t_order_0";
+            statement = connection.prepareStatement(sql);
+            statement.execute();
+            System.out.println("t_order_"+ i +"表复制完成");
+        }
+    }
+
+    public static void update() throws SQLException, InterruptedException {
+        DBsQO qo = new DBsQO();
+        qo.setIp("localhost");
+        qo.setDbName("fuxi");
+        Connection connection = DBConnection.getConnection(qo);
+        PreparedStatement statement = null;
+        String sql = "update test set name=? where id=?";
+        Random random = new Random();
+        statement = connection.prepareStatement(sql);
+        statement.setString(1, "lisi");
+        statement.setInt(2, 2);
+        Thread.sleep(500);
+        connection.setAutoCommit(false);
+        int i = statement.executeUpdate();
+        connection.commit();
+        System.out.println("update:" + i);
+    }
+
     public static void main(String[] args) throws SQLException {
-        insertDemo();
+
+//        Thread thread1 = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    update();
+//                } catch (SQLException e) {
+//                    e.printStackTrace();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//        Thread thread2 = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    DBsQO qo = new DBsQO();
+//                    qo.setIp("localhost");
+//                    qo.setDbName("fuxi");
+//                    qo.setTableName("test");
+//                    List<Object> rows = getRows(qo);
+//                    System.out.println(rows);
+//                } catch (SQLException e) {
+//                    e.printStackTrace();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//        thread2.start();
+//        thread1.start();
     }
 
     public List<DBs> getDBs(DBsQO qo) throws SQLException {
@@ -69,7 +139,7 @@ public class DBsDao {
         return list;
     }
 
-    public List<Object> getRows(DBsQO qo) throws SQLException {
+    public static List<Object> getRows(DBsQO qo) throws SQLException, InterruptedException {
         String sql = "select * from {0}";
         sql = MessageFormat.format(sql, qo.getTableName());
         StringBuilder sb = new StringBuilder(sql);
@@ -83,7 +153,10 @@ public class DBsDao {
             statement.setInt(1, (qo.getPage() - 1) * qo.getLimit());
             statement.setInt(2, qo.getLimit());
         }
+        connection.setAutoCommit(false);
+        Thread.sleep(2000);
         findAndPretty(rows, statement);
+        connection.commit();
         return rows;
     }
 
@@ -126,10 +199,11 @@ public class DBsDao {
         return tables;
     }
 
-    private void findAndPretty(List<Object> rows, PreparedStatement statement) throws SQLException {
+    private static void findAndPretty(List<Object> rows, PreparedStatement statement) throws SQLException {
         //execute如果返回了结果集 则返回的值为true 表示select操作
         //如果返回为false 则表示ddl操作
         HashMap propertyMap = new HashMap();
+
         boolean result = statement.execute();
         ResultSet rs = null;
         if(result){

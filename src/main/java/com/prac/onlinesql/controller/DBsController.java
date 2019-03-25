@@ -42,7 +42,7 @@ public class DBsController {
      * @throws SQLException
      */
     @RequestMapping(value = "/dbs/rows", method =RequestMethod.GET)
-    public ListResponse rows(DBsQO qo) throws SQLException {
+    public ListResponse rows(DBsQO qo) throws SQLException, InterruptedException {
         long count = dBsService.queryTableTotal(qo);
         return new ListResponse(200, "success", dBsService.getRows(qo), count);
     }

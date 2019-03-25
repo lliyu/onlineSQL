@@ -4,7 +4,7 @@ spring:
   mvc:
     static-path-pattern: /**
   datasource:
-    url: jdbc:mysql://localhost:3306/information_schema?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
+    url: jdbc:mysql://localhost:3306/fuxi?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
     username: root
     password: root
     driver-class-name: com.mysql.jdbc.Driver
