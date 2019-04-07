@@ -1,6 +1,5 @@
 package com.prac.onlinesql.mq.db;
 
-
 import com.prac.onlinesql.mq.entity.AcademicWorksEntity;
 
 import java.sql.*;
@@ -18,7 +17,9 @@ public class DBData {
 
     public static Connection getConnection() throws ClassNotFoundException, SQLException {
         if(connection == null){
-            Class.forName("com.mysql.jdbc.Driver");
+//            new Driver();
+//            Class.forName("com.mysql.jdbc.Driver");
+            ClassLoader.getSystemClassLoader().loadClass("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/renren-security?serverTimezone=UTC", "root", "123456");
         }
         return connection;
@@ -93,4 +94,9 @@ public class DBData {
 
         return sql.toString();
     }
+
+    public static void main(String[] args) throws SQLException, ClassNotFoundException {
+        System.out.println(getCreateTableSQL("tb_user"));
+    }
+
 }

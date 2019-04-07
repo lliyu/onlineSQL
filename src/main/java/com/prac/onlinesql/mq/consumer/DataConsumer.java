@@ -9,6 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.sql.SQLException;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -27,6 +28,7 @@ public class DataConsumer {
     private static JedisClientPool jedisClientPool = new JedisClientPool();
 
     public void consumer() throws IOException, TimeoutException, SQLException, ClassNotFoundException {
+
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("39.105.108.154");
         factory.setPort(5672);

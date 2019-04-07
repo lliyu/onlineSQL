@@ -2,24 +2,17 @@ package com.prac.onlinesql.dao;
 
 import com.alibaba.fastjson.JSONObject;
 import com.prac.onlinesql.entity.DBs;
-import com.prac.onlinesql.entity.Table;
-import com.prac.onlinesql.qo.BaseQO;
 import com.prac.onlinesql.qo.DBsQO;
 import com.prac.onlinesql.qo.SelectQO;
 import com.prac.onlinesql.util.DateUtils;
-import com.prac.onlinesql.util.Status;
-import com.prac.onlinesql.util.bean.DynamicBean;
 import com.prac.onlinesql.util.conn.DBConnection;
-import com.prac.onlinesql.vo.TableVO;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.sql.*;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.Date;
 
 /**
  * @Auther: liyu
@@ -30,26 +23,6 @@ import java.util.Date;
 public class DBsDao {
 
     private static Log log = LogFactory.getLog(DBsDao.class);
-
-    public static void insertDemo() throws SQLException {
-        DBsQO qo = new DBsQO();
-        qo.setIp("localhost");
-        qo.setDbName("db1");
-        Connection connection = DBConnection.getConnection(qo);
-        List<DBs> list = null;
-        PreparedStatement statement = null;
-        String sql = "insert into t_order_0(id,user_id,price,status) values(?,?,?,?)";
-        Random random = new Random();
-        Status[] values = Status.values();
-        for(int i=0;i<2000;i++){
-            statement = connection.prepareStatement(sql);
-            statement.setString(1, "test" + i);
-            statement.setInt(2, i);
-            statement.setInt(3, random.nextInt(1000));
-            statement.setString(4, values[random.nextInt(2)].getStatus());
-            boolean execute = statement.execute();
-        }
-    }
 
     public static void copyTable() throws SQLException {
         DBsQO qo = new DBsQO();
