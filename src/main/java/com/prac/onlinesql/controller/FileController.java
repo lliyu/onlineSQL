@@ -30,6 +30,7 @@ public class FileController {
         int len = -1;
         byte[] bytes = new byte[1024];
         FileInputStream inputStream = (FileInputStream) multipartFile.getInputStream();
+
 //        ServletOutputStream outputStream = response.getOutputStream();
 //        while((len=inputStream.read(bytes))!=-1){
 //            outputStream.write(bytes,0,len);
@@ -38,6 +39,7 @@ public class FileController {
             String originalFilename = multipartFile.getOriginalFilename();
             int index = originalFilename.lastIndexOf(".");
             String path = "G://file//" + originalFilename.substring(0,index) + "//";
+            SUFFIX_FILE = originalFilename.substring(index, originalFilename.length());
             File pathF = new File(path);
             if(!pathF.isDirectory()){
                 pathF.mkdirs();
@@ -52,7 +54,7 @@ public class FileController {
             int size = cpu;
             //每个线程下载的大小 这里设置为10mb
             //如果设置过大的话会导致内存溢出
-            int memery = 10 * 1024;
+            int memery = 10 * 1024 * 1024;
 
             //计算需要的线程数量
             int count = length/memery + ((length%memery)==0?0:1);
