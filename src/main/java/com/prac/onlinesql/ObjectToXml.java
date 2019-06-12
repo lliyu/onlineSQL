@@ -26,20 +26,20 @@ public class ObjectToXml {
         StringBuilder sb = new StringBuilder();
         sb.append("<data>\n" +
                 "<operation>insert</operation>\n");
-        sb.append("<sourceTable>academic_works<sourceTable>");
+        sb.append("<sourceTable>academic_works</sourceTable>");
 
         Field[] fields = source.getClass().getDeclaredFields();
         for(Field field:fields){
             field.setAccessible(true);
             if(!ObjectUtils.isEmpty(field.get(source))){
                 sb.append("<field>\n");
+                sb.append("<name>" + field.getName() + "</name>\n");
                 sb.append("<type>" + field.getType().getName() + "</type>\n");
                 sb.append("<value>" + field.get(source) + "</value>\n");
                 sb.append("</field>\n");
             }
         }
         sb.append("</data>\n");
-        
         Document document = DocumentHelper.parseText(sb.toString());
         Iterator<Element> opertation = document.getRootElement().elementIterator();
         while (opertation.hasNext()){

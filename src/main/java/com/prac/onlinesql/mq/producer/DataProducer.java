@@ -1,8 +1,10 @@
 package com.prac.onlinesql.mq.producer;
 
+import com.prac.onlinesql.dao.DBsDao;
 import com.prac.onlinesql.mq.db.DBData;
 import com.prac.onlinesql.mq.db.RemoteDBOperation;
 import com.prac.onlinesql.mq.entity.AcademicWorksEntity;
+import com.prac.onlinesql.qo.DBsQO;
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -26,7 +28,7 @@ public class DataProducer {
     private static String DATA_SYNC_EXCHANGE = "data_sync_exchange";
     private static String ROUTE_KEY = "data";
 
-    public void syncData(String tableName) throws IOException, TimeoutException, SQLException, ClassNotFoundException {
+    public void syncData(String tableName) throws IOException, TimeoutException, SQLException, ClassNotFoundException, InterruptedException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("39.105.108.154");
         factory.setUsername("admin");
@@ -46,6 +48,7 @@ public class DataProducer {
         channel.confirmSelect();//设置为confirm模式
 
         //判断数据表是否存在，不存在则将数据结构进行同步
+        tableName = "student";
         if(!RemoteDBOperation.isTableExist(tableName)){
             channel.queueDeclare("data_structure_queue", false, false, true, null);
 
@@ -54,8 +57,13 @@ public class DataProducer {
             channel.basicPublish(DATA_SYNC_EXCHANGE, "structure", null, tableSQL.getBytes("utf-8"));
         }
 
+
         //推送数据
-        List<AcademicWorksEntity> data = DBData.getData(tableName);
+        DBsQO qo = new DBsQO();
+        qo.setIp("localhost");
+        qo.setDbName("fuxi");
+        qo.setTableName("student");
+        List<Object> data = DBsDao.getRows(qo);
         data.stream().forEach(entity -> {
             try {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();

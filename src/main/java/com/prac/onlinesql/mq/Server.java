@@ -12,10 +12,10 @@ import java.util.concurrent.TimeoutException;
  **/
 public class Server {
 
-    public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException, TimeoutException {
+    public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException, TimeoutException, InterruptedException {
 
         DataProducer producer = new DataProducer();
-        producer.syncData("academic_works");
+        producer.syncData("student");
 //        System.out.println(RemoteDBOperation.isTableExist("sys_config"));
     }
 }

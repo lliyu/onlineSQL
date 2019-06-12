@@ -21,15 +21,15 @@ spring:
     testOnReturn: false
     poolPreparedStatements: true
     maxOpenPreparedStatements: 20
-  jpa:
-    database: MYSQL
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-      naming.physical-strategy: org.hibernate.cfg.ImprovedNamingStrategy
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL5Dialect
+#  jpa:
+#    database: MYSQL
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: update
+#      naming.physical-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.MySQL5Dialect
 
 #  jackson:
 #    default-property-inclusion: non_null #返回时过滤掉null

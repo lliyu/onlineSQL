@@ -61,7 +61,7 @@ public class DBsDao {
         System.out.println("update:" + i);
     }
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, InterruptedException {
 
 //        Thread thread1 = new Thread(new Runnable() {
 //            @Override
@@ -94,9 +94,18 @@ public class DBsDao {
 //        });
 //        thread2.start();
 //        thread1.start();
+
+        DBsQO qo = new DBsQO();
+        qo.setIp("localhost");
+        qo.setDbName("fuxi");
+        qo.setTableName("student");
+        List<DBs> dBs = getDBs(qo);
+        dBs.stream().forEach(db -> {
+            System.out.println(db.getDbName());
+        });
     }
 
-    public List<DBs> getDBs(DBsQO qo) throws SQLException {
+    public static List<DBs> getDBs(DBsQO qo) throws SQLException {
         Connection connection = DBConnection.getConnection(qo);
         List<DBs> list = null;
         PreparedStatement statement = null;

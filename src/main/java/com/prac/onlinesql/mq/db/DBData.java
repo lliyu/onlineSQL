@@ -20,7 +20,7 @@ public class DBData {
 //            new Driver();
 //            Class.forName("com.mysql.jdbc.Driver");
             ClassLoader.getSystemClassLoader().loadClass("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/renren-security?serverTimezone=UTC", "root", "123456");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/fuxi?serverTimezone=UTC", "root", "root");
         }
         return connection;
     }

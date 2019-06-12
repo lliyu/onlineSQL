@@ -4,6 +4,7 @@ import com.prac.onlinesql.dao.UserDao;
 import com.prac.onlinesql.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
@@ -20,10 +21,15 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     @Override
-    @Transactional
     public void insert() throws Exception {
         userDao.insert();
-//        userDao.insertD();
+        test();
 //        throw new RuntimeException();
     }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void test() throws SQLException {
+        userDao.insertD();
+    }
+
 }

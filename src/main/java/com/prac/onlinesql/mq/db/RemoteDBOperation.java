@@ -59,4 +59,10 @@ public class RemoteDBOperation {
 
         return preparedStatement.execute();
     }
+
+    public static void insert(String sql) throws SQLException, ClassNotFoundException {
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.executeUpdate();
+    }
 }

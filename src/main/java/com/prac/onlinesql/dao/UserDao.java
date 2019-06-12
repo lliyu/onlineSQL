@@ -1,5 +1,6 @@
 package com.prac.onlinesql.dao;
 
+import com.prac.onlinesql.qo.DBsQO;
 import com.prac.onlinesql.util.conn.DBConnection;
 import com.sun.javafx.util.Logging;
 import org.springframework.stereotype.Component;
@@ -18,15 +19,19 @@ import java.sql.SQLException;
 public class UserDao {
 
     public void insert()  {
-        Connection connection = DBConnection.getConnection(null);
+        DBsQO qo = new DBsQO();
+        qo.setIp("localhost");
+        qo.setDbName("dn_mall_dep");
+        qo.setTableName("tb_dict");
+        Connection connection = DBConnection.getConnection(qo);
         PreparedStatement statement = null;
         try {
             connection.setAutoCommit(false);
             statement = connection.prepareStatement("INSERT INTO `tb_dict`(dict,type) VALUES (?, ?)");
-            statement.setString(1,"Test");
+            statement.setString(1,"Test1");
             statement.setInt(2,1);
             statement.execute();
-            int i = 1/0;
+//            int i = 1/0;
             connection.commit();
         } catch (SQLException e) {
             try {
@@ -40,11 +45,15 @@ public class UserDao {
 
 
     public void insertD() throws SQLException {
-        Connection connection = DBConnection.getConnection(null);
+        DBsQO qo = new DBsQO();
+        qo.setIp("localhost");
+        qo.setDbName("dn_mall_dep");
+        qo.setTableName("tb_dict");
+        Connection connection = DBConnection.getConnection(qo);
         PreparedStatement statement = null;
-        connection.setAutoCommit(false);
+        connection.setAutoCommit(true);
         statement = connection.prepareStatement("INSERT INTO `tb_dict`(dict,type) VALUES (?, ?)");
-        statement.setString(1,"Test");
+        statement.setString(1,"Test2");
         statement.setInt(2,1);
         statement.execute();
         int i = 1/0;

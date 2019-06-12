@@ -1,5 +1,7 @@
 package com.prac.onlinesql.mq.consumer;
 
+import com.alibaba.fastjson.JSONObject;
+import com.prac.onlinesql.mq.db.DBData;
 import com.prac.onlinesql.mq.db.RemoteDBOperation;
 import com.prac.onlinesql.mq.entity.AcademicWorksEntity;
 import com.prac.onlinesql.mq.jedis.JedisClientPool;
@@ -9,6 +11,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeoutException;
 
@@ -73,33 +78,53 @@ public class DataConsumer {
 
                 ByteArrayInputStream stream = new ByteArrayInputStream(body);
                 ObjectInputStream ois = new ObjectInputStream(stream);
-                AcademicWorksEntity academicWorksEntity = null;
+                JSONObject object = null;
                 try {
-                    academicWorksEntity = (AcademicWorksEntity) ois.readObject();
+                    object = (JSONObject) ois.readObject();
                     //使用类名+id作为全局唯一ID 保证消息不会重复消费
-                    String key = academicWorksEntity.getClass().getName() + ":" + academicWorksEntity.getId();
-                    if(jedisClientPool.get(key)==null){
-                        RemoteDBOperation.insertData(academicWorksEntity);
-                        jedisClientPool.set(key, String.valueOf(academicWorksEntity.getId()));
+                    Set<Map.Entry<String, Object>> entries = object.entrySet();
+                    Iterator<Map.Entry<String, Object>> iterator = entries.iterator();
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("insert into student(");
+                    StringBuilder fields = new StringBuilder();
+                    StringBuilder values = new StringBuilder();
+                    while (iterator.hasNext()){
+                        Map.Entry<String, Object> next = iterator.next();
+                        fields.append(next.getKey() + ",");
+                        if(next.getValue() instanceof String){
+                            values.append("'" + next.getValue() + "',");
+                        }else {
+                            values.append(next.getValue() + ",");
+                        }
                     }
-                } catch (ClassNotFoundException e) {
+
+                    sb.append(fields.substring(0, fields.toString().length()-1) + ")");
+                    sb.append(" values(" + values.substring(0, values.toString().length()-1) + ")");
+                    RemoteDBOperation.insert(sb.toString());
+//                    String key = object.getClass().getName() + ":" + object.getString("id");
+//                    if(jedisClientPool.get(key)==null){
+//                        RemoteDBOperation.insertData(academicWorksEntity);
+////                        jedisClientPool.set(key, String.valueOf(academicWorksEntity.getId()));
+//                    }
+                    System.out.println(sb.toString());
+                } catch (Exception e) {
                     e.printStackTrace();
-                } catch (SQLException e) {
                     //数据插入失败 进行重试
-                    String retry = academicWorksEntity.getClass().getName() + ":retry:" + academicWorksEntity.getId();
-                    if(Integer.valueOf(jedisClientPool.get(retry)) < 3){
-                        //重试
-                        //todo
-                    }else {
-                        //重试次数过多 将该消息存入失败表中 后面重试或人工补偿
-                        //todo
-                    }
+//                    String retry = academicWorksEntity.getClass().getName() + ":retry:" + academicWorksEntity.getId();
+//                    String retry = "";
+//                    if(Integer.valueOf(jedisClientPool.get(retry)) < 3){
+//                        //重试
+//                        //todo
+//                    }else {
+//                        //重试次数过多 将该消息存入失败表中 后面重试或人工补偿
+//                        //todo
+//                    }
                 }
                 channel.basicAck(envelope.getDeliveryTag(),false);
             }
         };
         //判断数据表是否存在，不存在则将数据结构进行同步
-        while(!RemoteDBOperation.isTableExist("academic_works")){
+        while(!RemoteDBOperation.isTableExist("student")){
             channel.basicConsume(DATA_STRUCTURE_QUEUE, false, consumerStructure);
         }
         channel.basicConsume(DATA_QUEUE, false, consumerData);

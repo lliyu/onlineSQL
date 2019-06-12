@@ -1,6 +1,8 @@
 package com.prac.onlinesql.entity;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
 
     private int age;
     private String name;

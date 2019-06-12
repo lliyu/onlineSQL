@@ -28,7 +28,7 @@ public class DBConnection {
     //    @Value("${spring.datasource.username}")
     private static String username = "root";
     //    @Value("${spring.datasource.password}")
-    private static String password = "123456";
+    private static String password = "root";
 
     static {
         //默认创建一个连接
