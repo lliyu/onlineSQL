@@ -36,4 +36,13 @@ public class PageInfo implements Serializable {
     public void setUri(String uri) {
         this.uri = uri;
     }
+
+    @Override
+    public String toString() {
+        return "PageInfo{" +
+                "name='" + name + '\'' +
+                ", size=" + size +
+                ", uri='" + uri + '\'' +
+                '}';
+    }
 }

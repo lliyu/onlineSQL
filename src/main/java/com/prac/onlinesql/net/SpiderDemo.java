@@ -20,17 +20,19 @@ public class SpiderDemo {
     private static String SourceUrl = "http://www.shu800.com/xinggan/index_%d.html";
 
     public static void main(String[] args) throws IOException {
-        for (int i = 2; i < 43; i++) {
-            System.out.println("downloading:" + i);
-            readUrl(String.format(SourceUrl, i), "G://html//pages.txt");
-            //从文件读取
-            String context = readHtmlFromFile("G://html//pages.txt");
-            ArrayList<String> imgs = parseHtmlToImg(context);
-            imgs.stream().forEach(img -> {
-                if(!"//ia.51.la/go1?id=20063721&pvFlag=1".equals(img))
-                    downloadPic(img, "pic");
-            });
-        }
+//        for (int i = 2; i < 43; i++) {
+//            System.out.println("downloading:" + i);
+//            readUrl(String.format(SourceUrl, i), "G://html//pages.txt");
+//            //从文件读取
+//            String context = readHtmlFromFile("G://html//pages.txt");
+//            ArrayList<String> imgs = parseHtmlToImg(context);
+//            imgs.stream().forEach(img -> {
+//                if(!"//ia.51.la/go1?id=20063721&pvFlag=1".equals(img))
+//                    downloadPic(img, "pic");
+//            });
+//        }
+
+        downloadPic("", "");
         //对html进行解析
 //        ArrayList<PageInfo> pages = parseHtmlToPage(context);
 //
@@ -56,9 +58,12 @@ public class SpiderDemo {
     private static void downloadPic(String img, String direct) {
         // http://www.shu800.com/imgh/70_2602.jpg
         try {
+//            img = "http://img.94img.com/data/0190/04/15546221346228.jpg";
+            img = "http://www.shu800.com/imgh/38_3338.jpg";
             URL url = new URL(img);
             URLConnection urlConnection = url.openConnection();
             InputStream inputStream = urlConnection.getInputStream();
+            System.out.println("avaiable:" + inputStream.available());
             int index = img.lastIndexOf("/");
             String name = img.substring(index);
             File file = new File("G://file//" + direct + "//");
@@ -68,7 +73,10 @@ public class SpiderDemo {
             if(!file.exists())
                 file.createNewFile();
             FileOutputStream fos = new FileOutputStream(file);
+            long l = System.currentTimeMillis();
             IOUtils.copy(inputStream, fos);
+            long l1 = System.currentTimeMillis();
+            System.out.println(l1 - l);
             fos.close();
         } catch (MalformedURLException e) {
             e.printStackTrace();
