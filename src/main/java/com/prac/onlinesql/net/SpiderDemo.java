@@ -17,26 +17,34 @@ import java.util.regex.Pattern;
  */
 public class SpiderDemo {
 
-    private static String SourceUrl = "http://www.shu800.com/xinggan/";
+    private static String SourceUrl = "http://www.shu800.com/xinggan/index_%d.html";
 
     public static void main(String[] args) throws IOException {
-        readUrl(SourceUrl, "G://html//pages.txt");
-        //从文件读取
-        String context = readHtmlFromFile("G://html//pages.txt");
+        for (int i = 2; i < 43; i++) {
+            System.out.println("downloading:" + i);
+            readUrl(String.format(SourceUrl, i), "G://html//pages.txt");
+            //从文件读取
+            String context = readHtmlFromFile("G://html//pages.txt");
+            ArrayList<String> imgs = parseHtmlToImg(context);
+            imgs.stream().forEach(img -> {
+                if(!"//ia.51.la/go1?id=20063721&pvFlag=1".equals(img))
+                    downloadPic(img, "pic");
+            });
+        }
         //对html进行解析
-        ArrayList<PageInfo> pages = parseHtmlToPage(context);
-
-        pages.stream().forEach(page -> {
-            try {
-                ArrayList<String> imgs = parseDetailsPage(page);
-                imgs.stream().forEach(img -> {
-                    System.out.println("开始下载：" + page.getName());
-                    downloadPic(img, page.getName());
-                });
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-        });
+//        ArrayList<PageInfo> pages = parseHtmlToPage(context);
+//
+//        pages.stream().forEach(page -> {
+//            try {
+//                ArrayList<String> imgs = parseDetailsPage(page);
+//                imgs.stream().forEach(img -> {
+//                    System.out.println("downloading:" + page.getName());
+//                    downloadPic(img, page.getName());
+//                });
+//            } catch (MalformedURLException e) {
+//                e.printStackTrace();
+//            }
+//        });
     }
 
     private static ArrayList<String> parseDetailsPage(PageInfo page) throws MalformedURLException {
@@ -53,9 +61,12 @@ public class SpiderDemo {
             InputStream inputStream = urlConnection.getInputStream();
             int index = img.lastIndexOf("/");
             String name = img.substring(index);
-            File file = new File("G://file//" + direct + "//" + name);
+            File file = new File("G://file//" + direct + "//");
             if(!file.exists())
                 file.mkdirs();
+            file = new File("G://file//" + direct + "//" + name);
+            if(!file.exists())
+                file.createNewFile();
             FileOutputStream fos = new FileOutputStream(file);
             IOUtils.copy(inputStream, fos);
             fos.close();
@@ -84,7 +95,7 @@ public class SpiderDemo {
 
     private static ArrayList<String> parseHtmlToImg(String context) {
         //正则匹配
-        Pattern compile = Pattern.compile("<img.*?src=\"(.*?)\" />");
+        Pattern compile = Pattern.compile("<img.*?src=\"(.*?)\".*?>");
         Matcher matcher = compile.matcher(context);
         ArrayList<String> imgs = new ArrayList<>();
         while (matcher.find()){
@@ -97,6 +108,8 @@ public class SpiderDemo {
         FileInputStream fis = null;
         try {
             File file = new File(fileName);
+            if(!file.exists())
+                file.createNewFile();
             fis = new FileInputStream(file);
             StringBuilder sb = new StringBuilder();
             byte[] bytes = new byte[1024];
