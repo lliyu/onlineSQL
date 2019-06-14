@@ -1,5 +1,7 @@
 package com.prac.onlinesql.net;
 
+import com.prac.onlinesql.net.youguo.entity.PageInfo;
+import com.prac.onlinesql.net.youguo.utils.FileUtils;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 
 import java.io.*;
@@ -51,15 +53,15 @@ public class SpiderDemo {
 
     private static ArrayList<String> parseDetailsPage(PageInfo page) throws MalformedURLException {
         readUrl(SourceUrl + page.getUri(), "G://html//" + page.getName() + ".txt");
-        String html = readHtmlFromFile("G://html//" + page.getName() + ".txt");
+        String html = FileUtils.readHtmlFromFile("G://html//" + page.getName() + ".txt");
         return parseHtmlToImg(html);
     }
 
     private static void downloadPic(String img, String direct) {
         // http://www.shu800.com/imgh/70_2602.jpg
         try {
-//            img = "http://img.94img.com/data/0190/04/15546221346228.jpg";
-            img = "http://www.shu800.com/imgh/38_3338.jpg";
+            img = "http://img.94img.com/data/0190/04/15546221346228.jpg";
+//            img = "http://www.shu800.com/imgh/38_3338.jpg";
             URL url = new URL(img);
             URLConnection urlConnection = url.openConnection();
             InputStream inputStream = urlConnection.getInputStream();
@@ -112,26 +114,6 @@ public class SpiderDemo {
         return imgs;
     }
 
-    private static String readHtmlFromFile(String fileName) {
-        FileInputStream fis = null;
-        try {
-            File file = new File(fileName);
-            if(!file.exists())
-                file.createNewFile();
-            fis = new FileInputStream(file);
-            StringBuilder sb = new StringBuilder();
-            byte[] bytes = new byte[1024];
-            while(fis.read(bytes)!=-1){
-                sb.append(new String(bytes, "utf-8"));
-            }
-            return sb.toString();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     private static void readUrl(String destUrl, String fileName) throws MalformedURLException {
         URL url = new URL(destUrl);

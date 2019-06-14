@@ -1,17 +1,18 @@
-package com.prac.onlinesql.net;
+package com.prac.onlinesql.net.youguo.entity;
 
 import java.io.Serializable;
 
 /**
  * @Auther: Administrator
- * @Date: 2019-06-13 17:34
+ * @Date: 2019-06-13 17:43
  * @Description:
  */
-public class PageInfo implements Serializable {
+public class ImgInfo implements Serializable {
 
     private String name;
     private int size;
     private String uri;
+    private String directName;
 
     public String getName() {
         return name;
@@ -37,12 +38,11 @@ public class PageInfo implements Serializable {
         this.uri = uri;
     }
 
-    @Override
-    public String toString() {
-        return "PageInfo{" +
-                "name='" + name + '\'' +
-                ", size=" + size +
-                ", uri='" + uri + '\'' +
-                '}';
+    public String getDirectName() {
+        return directName;
+    }
+
+    public void setDirectName(String directName) {
+        this.directName = directName;
     }
 }

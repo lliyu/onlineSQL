@@ -1,5 +1,7 @@
 package com.prac.onlinesql.net;
 
+import com.prac.onlinesql.net.youguo.entity.PageInfo;
+import com.prac.onlinesql.net.youguo.utils.URLUtils;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 
 import java.io.*;
@@ -21,17 +23,25 @@ public class YouGuoPic {
     private static String SOURCEURL = "http://www.94img.com";
     private static String ALBUMS = "/albums";
 
-    public static void main(String[] args) throws MalformedURLException {
+    public static void main(String[] args) throws IOException {
         YouGuoPic youGuoPic = new YouGuoPic();
-        String content = youGuoPic.readUrl(SOURCEURL + ALBUMS + "/YOUMI-2.html");
+
+    }
+
+    public static void picDownNavigat() throws MalformedURLException {
+        YouGuoPic youGuoPic = new YouGuoPic();
+        String content = URLUtils.readUrl(SOURCEURL + ALBUMS + "/YOUMI-2.html");
         ArrayList<PageInfo> pages = youGuoPic.parseHtmlToPage(content);
         pages.stream().forEach(page -> {
             try {
                 int count = youGuoPic.parseDetailPageCount(page);
+                String uri = page.getUri();
+                String uriFormat = page.getUri().substring(0, page.getUri().lastIndexOf(".")) + "-%d"+ page.getUri().substring(page.getUri().lastIndexOf("."));
                 for (int i = 1; i <= count; i++) {
                     if(i>1){
-                        page.setUri(page.getUri().substring(0, page.getUri().lastIndexOf(".")) + "-" + i + page.getUri().substring(page.getUri().lastIndexOf(".")));;
-                    }
+                        page.setUri(String.format(uriFormat, i));
+                    }else
+                        page.setUri(uri);
                     if(!finishedHtml.contains(page.getUri())){
                         finishedHtml.add(page.getUri());
                         ArrayList<String> imgs = youGuoPic.parseDetailPageHtml(page);
@@ -46,9 +56,9 @@ public class YouGuoPic {
         });
     }
 
-    private ArrayList<String> parseDetailPageHtml(PageInfo page) throws MalformedURLException {
+    public ArrayList<String> parseDetailPageHtml(PageInfo page) throws MalformedURLException {
         //正则匹配
-        String html = readUrl(SOURCEURL + page.getUri());
+        String html = URLUtils.readUrl(SOURCEURL + page.getUri());
         Pattern compile = Pattern.compile("<img.*?src=\"(.*?)\".*?>");
         Matcher matcher = compile.matcher(html);
         ArrayList<String> imgs = new ArrayList<>();
@@ -58,17 +68,20 @@ public class YouGuoPic {
         return imgs;
     }
 
-    private int parseDetailPageCount(PageInfo page) throws MalformedURLException {
+    public int parseDetailPageCount(PageInfo page) throws MalformedURLException {
         //正则匹配
-        String html = readUrl(SOURCEURL + page.getUri());
+        String html = URLUtils.readUrl(SOURCEURL + page.getUri());
         Pattern compile = Pattern.compile("<span class=\"count\">.*?(\\d+).*?</span>");
         Matcher matcher = compile.matcher(html);
         matcher.find();
         return Integer.valueOf(matcher.group(1));
     }
 
-    private static void downloadPic(String img, String direct) {
+    public static void downloadPic(String img, String direct) {
         // http://www.shu800.com/imgh/70_2602.jpg
+        //将读取到的logo图片去除  正则匹配比较麻烦 所以在这里做
+        if("/themes/sense/images/logo.png".equals(img))
+            return;
         try {
             System.out.println("downloading:" + direct + "/" + img);
             URL url = new URL(img);
@@ -96,7 +109,7 @@ public class YouGuoPic {
         }
     }
 
-    private ArrayList<PageInfo> parseHtmlToPage(String content) {
+    public ArrayList<PageInfo> parseHtmlToPage(String content) {
         //正则匹配
         Pattern compile = Pattern.compile("<span class=\"name\">[\\s\\S]*?<a href=\"(.*?)\">(.*?)</a>");
         Matcher matcher = compile.matcher(content);
@@ -110,20 +123,4 @@ public class YouGuoPic {
         return pages;
     }
 
-    private String readUrl(String destUrl) throws MalformedURLException {
-        URL url = new URL(destUrl);
-        StringBuilder sb = new StringBuilder();
-        try {
-            URLConnection urlConnection = url.openConnection();
-            InputStream inputStream = urlConnection.getInputStream();
-            byte[] bytes = new byte[1024];
-
-            while (inputStream.read(bytes) != -1) {
-                sb.append(new String(bytes, "utf-8"));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return sb.toString();
-    }
 }

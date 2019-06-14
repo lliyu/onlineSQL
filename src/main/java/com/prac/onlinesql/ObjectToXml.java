@@ -21,7 +21,7 @@ import java.util.Map;
  **/
 public class ObjectToXml {
 
-    public String generatorXml(Object source) throws IllegalAccessException, IOException, DocumentException {
+    public static String generatorXml(Object source) throws IllegalAccessException, IOException, DocumentException {
 
         StringBuilder sb = new StringBuilder();
         sb.append("<data>\n" +
