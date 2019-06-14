@@ -1,10 +1,13 @@
 package com.prac.onlinesql.net.youguo.utils;
 
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.URISyntaxException;
 
 /**
  * @Auther: Administrator
@@ -13,12 +16,13 @@ import java.net.URLConnection;
  */
 public class URLUtils {
 
-    public static String readUrl(String destUrl) throws MalformedURLException {
-        URL url = new URL(destUrl);
+    public static String readUrl(String destUrl) throws IOException, URISyntaxException {
+//        URL url = new URL(destUrl);
+        CloseableHttpResponse response = obtainHttpClientGet(destUrl);
         StringBuilder sb = new StringBuilder();
         try {
-            URLConnection urlConnection = url.openConnection();
-            InputStream inputStream = urlConnection.getInputStream();
+//            URLConnection urlConnection = url.openConnection();
+            InputStream inputStream = response.getEntity().getContent();
             byte[] bytes = new byte[1024];
             while (inputStream.read(bytes) != -1) {
                 sb.append(new String(bytes, "utf-8"));
@@ -27,6 +31,13 @@ public class URLUtils {
             e.printStackTrace();
         }
         return sb.toString();
+    }
+
+    public static CloseableHttpResponse obtainHttpClientGet(String destUrl) throws IOException {
+        HttpGet httpGet = new HttpGet(destUrl);
+        httpGet.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
+        CloseableHttpClient client = HttpClientBuilder.create().build();
+        return client.execute(httpGet);
     }
 
     public static String parseURL(String url, int page){

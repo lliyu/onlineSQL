@@ -47,3 +47,7 @@ mybatis:
   type-aliases-package: com.prac.onlinesql.mapper
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+logging:
+  level:
+    org.apache.http.wire: debug
+    org.apache.http.headers: debug

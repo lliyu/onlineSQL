@@ -5,16 +5,16 @@ import com.prac.onlinesql.net.youguo.navigat.ParseNavigator;
 import com.prac.onlinesql.net.youguo.sublink.ParseSubLink;
 import com.prac.onlinesql.net.youguo.utils.Constant;
 import com.prac.onlinesql.net.youguo.utils.FileUtils;
+import com.prac.onlinesql.net.youguo.utils.RegexUtils;
 import com.prac.onlinesql.net.youguo.utils.URLUtils;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -35,7 +35,7 @@ public class ParsePicDetail {
         finishedLinkHtml.add(Constant.SOURCEURL + "/");
     }
 
-    public static void main(String[] args) throws MalformedURLException {
+    public static void main(String[] args) throws IOException, URISyntaxException {
         String html = FileUtils.readHtmlFromFile("G://html//img.txt");
         ParseNavigator navigator = new ParseNavigator();
         Map<String, String> links = navigator.parseNavigatorLink(html);
@@ -69,46 +69,54 @@ public class ParsePicDetail {
                         }
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
                     }
                 });
             }
         }
     }
 
-    public ArrayList<String> parseDetailPageHtml(PageInfo page) throws MalformedURLException {
+    public ArrayList<String> parseDetailPageHtml(PageInfo page) throws IOException, URISyntaxException {
         //正则匹配
         String html = URLUtils.readUrl(Constant.SOURCEURL + page.getUri());
         Pattern compile = Pattern.compile("<img.*?src=\"(.*?)\".*?>");
         Matcher matcher = compile.matcher(html);
         ArrayList<String> imgs = new ArrayList<>();
         while (matcher.find()) {
+            //这里匹配图片的url时 目前youguo可能存在某些页面中某一图片是拼凑的 正则无法直接匹配 目前先丢弃
+//            String img = matcher.group(1);
+//            if("http:// <div class=".equals(img))
+//                continue;
             imgs.add(matcher.group(1));
         }
         return imgs;
     }
 
-    public int parseDetailPageCount(PageInfo page) throws MalformedURLException {
+    public int parseDetailPageCount(PageInfo page) throws IOException, URISyntaxException {
         //正则匹配
         String html = URLUtils.readUrl(Constant.SOURCEURL + page.getUri());
-        Pattern compile = Pattern.compile("<span class=\"count\">.*?(\\d+).*?</span>");
+        Pattern compile = Pattern.compile("<span class=\"count\">.*?(\\d+).*?");
         Matcher matcher = compile.matcher(html);
         matcher.find();
         return Integer.valueOf(matcher.group(1));
     }
 
     public void downloadPic(String img, String direct) {
-        // http://www.shu800.com/imgh/70_2602.jpg
         //将读取到的logo图片去除  正则匹配比较麻烦 所以在这里做
-        if("/themes/sense/images/logo.png".equals(img))
+        if(!RegexUtils.matchURL(img))
             return;
         try {
             Thread.sleep(100);
             System.out.println("downloading:" + direct + "/" + img);
-            URL url = new URL(img);
-            long l = System.currentTimeMillis();
-            System.out.println(l);
-            URLConnection urlConnection = url.openConnection();
-            InputStream inputStream = urlConnection.getInputStream();
+//            URL url = new URL(img);
+//            URLConnection urlConnection = url.openConnection();
+//            InputStream inputStream = urlConnection.getInputStream();
+            CloseableHttpResponse response = URLUtils.obtainHttpClientGet(img);
+            if(response.getStatusLine().getStatusCode() != 200)
+                return;
             int index = img.lastIndexOf("/");
             String name = img.substring(index);
             File file = new File("G://file//" + direct + "//");
@@ -117,11 +125,9 @@ public class ParsePicDetail {
             file = new File("G://file//" + direct + "//" + name);
             if (!file.exists())
                 file.createNewFile();
-//            System.out.println(System.currentTimeMillis() - l);
             FileOutputStream fos = new FileOutputStream(file);
-            IOUtils.copy(inputStream, fos);
+            IOUtils.copy(response.getEntity().getContent(), fos);
             fos.close();
-//            System.out.println(System.currentTimeMillis() - l);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {

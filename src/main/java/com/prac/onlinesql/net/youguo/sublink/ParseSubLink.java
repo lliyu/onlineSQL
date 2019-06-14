@@ -6,7 +6,9 @@ import com.prac.onlinesql.net.youguo.utils.Constant;
 import com.prac.onlinesql.net.youguo.utils.FileUtils;
 import com.prac.onlinesql.net.youguo.utils.URLUtils;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -20,7 +22,7 @@ import java.util.regex.Pattern;
  */
 public class ParseSubLink {
 
-    public static void main(String[] args) throws MalformedURLException {
+    public static void main(String[] args) throws IOException, URISyntaxException {
         String html = FileUtils.readHtmlFromFile("G://html//img.txt");
         ParseNavigator navigator = new ParseNavigator();
         Map<String, String> links = navigator.parseNavigatorLink(html);

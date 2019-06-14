@@ -6,6 +6,7 @@ import org.apache.tomcat.util.http.fileupload.IOUtils;
 
 import java.io.*;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class YouGuoPic {
 
     }
 
-    public static void picDownNavigat() throws MalformedURLException {
+    public static void picDownNavigat() throws IOException, URISyntaxException {
         YouGuoPic youGuoPic = new YouGuoPic();
         String content = URLUtils.readUrl(SOURCEURL + ALBUMS + "/YOUMI-2.html");
         ArrayList<PageInfo> pages = youGuoPic.parseHtmlToPage(content);
@@ -52,11 +53,15 @@ public class YouGuoPic {
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
             }
         });
     }
 
-    public ArrayList<String> parseDetailPageHtml(PageInfo page) throws MalformedURLException {
+    public ArrayList<String> parseDetailPageHtml(PageInfo page) throws IOException, URISyntaxException {
         //正则匹配
         String html = URLUtils.readUrl(SOURCEURL + page.getUri());
         Pattern compile = Pattern.compile("<img.*?src=\"(.*?)\".*?>");
@@ -68,7 +73,7 @@ public class YouGuoPic {
         return imgs;
     }
 
-    public int parseDetailPageCount(PageInfo page) throws MalformedURLException {
+    public int parseDetailPageCount(PageInfo page) throws IOException, URISyntaxException {
         //正则匹配
         String html = URLUtils.readUrl(SOURCEURL + page.getUri());
         Pattern compile = Pattern.compile("<span class=\"count\">.*?(\\d+).*?</span>");
