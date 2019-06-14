@@ -44,6 +44,11 @@ public class ParsePicDetail {
         ParsePicDetail parsePicDetail = new ParsePicDetail();
         while (iterator.hasNext()){
             Map.Entry<String, String> next = iterator.next();
+            String rootPath = "G://file//" + next.getKey();
+            File file = new File(rootPath);
+            if(!file.exists()) {
+                file.mkdirs();
+            }
             String content = URLUtils.readUrl(Constant.SOURCEURL + next.getValue());
             int pageSize = subLink.parseDetailPageCount(content);
             for (int i = 1; i <= pageSize; i++) {
@@ -63,7 +68,7 @@ public class ParsePicDetail {
                                 finishedDetailHtml.add(page.getUri());
                                 ArrayList<String> imgs = parsePicDetail.parseDetailPageHtml(page);
                                 imgs.stream().forEach(img -> {
-                                    parsePicDetail.downloadPic(img, page.getName());
+                                    parsePicDetail.downloadPic(img, page.getName(), rootPath);
                                 });
                             }
                         }
@@ -104,7 +109,7 @@ public class ParsePicDetail {
         return Integer.valueOf(matcher.group(1));
     }
 
-    public void downloadPic(String img, String direct) {
+    public void downloadPic(String img, String direct, String rootPath) {
         //将读取到的logo图片去除  正则匹配比较麻烦 所以在这里做
         if(!RegexUtils.matchURL(img))
             return;
@@ -119,10 +124,10 @@ public class ParsePicDetail {
                 return;
             int index = img.lastIndexOf("/");
             String name = img.substring(index);
-            File file = new File("G://file//" + direct + "//");
+            File file = new File(rootPath + "//" + direct + "//");
             if (!file.exists())
                 file.mkdirs();
-            file = new File("G://file//" + direct + "//" + name);
+            file = new File(rootPath + "//" + direct + "//" + name);
             if (!file.exists())
                 file.createNewFile();
             FileOutputStream fos = new FileOutputStream(file);
