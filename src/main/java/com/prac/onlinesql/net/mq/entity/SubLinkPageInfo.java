@@ -1,4 +1,4 @@
-package com.prac.onlinesql.net.youguo.entity;
+package com.prac.onlinesql.net.mq.entity;
 
 import java.io.Serializable;
 
@@ -7,12 +7,29 @@ import java.io.Serializable;
  * @Date: 2019-06-13 17:34
  * @Description:
  */
-public class PageInfo implements Serializable {
+public class SubLinkPageInfo implements Serializable {
 
     private String name;
-    private int size;
+    private String rootName;
+    private String rootPath;
     private String uri;
     private int totalPage;
+
+    public String getRootName() {
+        return rootName;
+    }
+
+    public void setRootName(String rootName) {
+        this.rootName = rootName;
+    }
+
+    public String getRootPath() {
+        return rootPath;
+    }
+
+    public void setRootPath(String rootPath) {
+        this.rootPath = rootPath;
+    }
 
     public String getName() {
         return name;
@@ -20,14 +37,6 @@ public class PageInfo implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
     }
 
     public String getUri() {
@@ -50,7 +59,6 @@ public class PageInfo implements Serializable {
     public String toString() {
         return "PageInfo{" +
                 "name='" + name + '\'' +
-                ", size=" + size +
                 ", uri='" + uri + '\'' +
                 ", totalPage=" + totalPage +
                 '}';

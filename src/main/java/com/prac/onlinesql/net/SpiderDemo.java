@@ -1,6 +1,6 @@
 package com.prac.onlinesql.net;
 
-import com.prac.onlinesql.net.youguo.entity.PageInfo;
+import com.prac.onlinesql.net.mq.entity.SubLinkPageInfo;
 import com.prac.onlinesql.net.youguo.utils.FileUtils;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 
@@ -51,7 +51,7 @@ public class SpiderDemo {
 //        });
     }
 
-    private static ArrayList<String> parseDetailsPage(PageInfo page) throws MalformedURLException {
+    private static ArrayList<String> parseDetailsPage(SubLinkPageInfo page) throws MalformedURLException {
         readUrl(SourceUrl + page.getUri(), "G://html//" + page.getName() + ".txt");
         String html = FileUtils.readHtmlFromFile("G://html//" + page.getName() + ".txt");
         return parseHtmlToImg(html);
@@ -88,14 +88,14 @@ public class SpiderDemo {
 
     }
 
-    private static ArrayList<PageInfo> parseHtmlToPage(String context) {
+    private static ArrayList<SubLinkPageInfo> parseHtmlToPage(String context) {
         //正则匹配
         Pattern compile = Pattern.compile("<span class=\"fr\">(\\d+).*?href=\"(.*?)\".*?>(.*?)</a>");
         Matcher matcher = compile.matcher(context);
-        ArrayList<PageInfo> pages = new ArrayList<>();
+        ArrayList<SubLinkPageInfo> pages = new ArrayList<>();
         while (matcher.find()){
-            PageInfo page = new PageInfo();
-            page.setSize(Integer.valueOf(matcher.group(1)));
+            SubLinkPageInfo page = new SubLinkPageInfo();
+//            page.setSize(Integer.valueOf(matcher.group(1)));
             page.setUri(matcher.group(2));
             page.setName(matcher.group(3));
             pages.add(page);

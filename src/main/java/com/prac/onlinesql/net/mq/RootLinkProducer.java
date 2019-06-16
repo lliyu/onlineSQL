@@ -1,17 +1,20 @@
 package com.prac.onlinesql.net.mq;
 
 import com.prac.onlinesql.net.mq.entity.RootPageEntity;
+import com.prac.onlinesql.net.mq.util.MQConstant;
 import com.prac.onlinesql.net.mq.util.MQFactory;
 import com.prac.onlinesql.net.youguo.navigat.ParseNavigator;
+import com.prac.onlinesql.net.youguo.utils.Constant;
 import com.prac.onlinesql.net.youguo.utils.FileUtils;
+import com.prac.onlinesql.net.youguo.utils.URLUtils;
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,21 +27,30 @@ import java.util.concurrent.TimeoutException;
  */
 public class RootLinkProducer {
 
-    private static final String ROOT_LINK_EXCHANGE = "root_link_exchange";
-    private static final String ROOT_LINK_QUEUE = "root_link_queue";
-    private static final String ROOT_LINK_ROUTERKEY = "root_link";
+    private final static Logger log = LoggerFactory.getLogger(RootLinkProducer.class);
 
-    public static void main(String[] args) throws IOException, TimeoutException {
-        String html = FileUtils.readHtmlFromFile("G://html//img.txt");
+    public static void main(String[] args) throws IOException, TimeoutException, URISyntaxException {
+        RootLinkProducer linkProducer = new RootLinkProducer();
+        linkProducer.productRootLinkMessage();
+    }
+
+    private void productRootLinkMessage() throws IOException, TimeoutException, URISyntaxException {
+
+        String html = URLUtils.readUrl(Constant.SOURCEURL);
+//        FileUtils.readHtmlFromFile("G://html//img.txt");
         ParseNavigator navigator = new ParseNavigator();
         Map<String, String> links = navigator.parseNavigatorLink(html);
         ArrayList<RootPageEntity> pages = convertToEntity(links);
         Connection mqConnection = MQFactory.createMqConnection();
         Channel channel = mqConnection.createChannel();
-        channel.exchangeDeclare(ROOT_LINK_EXCHANGE, BuiltinExchangeType.DIRECT);
-        channel.queueDeclare(ROOT_LINK_QUEUE, false, false, true, null);
-        channel.queueBind(ROOT_LINK_QUEUE, ROOT_LINK_EXCHANGE, ROOT_LINK_ROUTERKEY);
-        channel.confirmSelect();//设置为confirm模式
+        channel.exchangeDeclare(MQConstant.ROOT_LINK_EXCHANGE, BuiltinExchangeType.DIRECT);
+        channel.queueDeclare(MQConstant.ROOT_LINK_QUEUE, false, false, false, null);
+        channel.queueBind(MQConstant.ROOT_LINK_QUEUE, MQConstant.ROOT_LINK_EXCHANGE, MQConstant.ROOT_LINK_ROUTERKEY);
+//        channel.confirmSelect();//设置为confirm模式
+        File file = new File("G://html/root.txt");
+        if(!file.exists())
+            file.createNewFile();
+        FileOutputStream fos = new FileOutputStream(file, true);
 
         pages.stream().forEach(page -> {
             try {
@@ -47,16 +59,19 @@ public class RootLinkProducer {
                 oos.writeObject(page);
                 byte[] bytes = baos.toByteArray();
 
-                channel.basicPublish(ROOT_LINK_EXCHANGE, ROOT_LINK_ROUTERKEY, null, bytes);
-                if(channel.waitForConfirms()){
-                    
-                }
+                fos.write((page.getName() + ":" + page.getPath() + "\r\n").getBytes());
+                channel.basicPublish(MQConstant.ROOT_LINK_EXCHANGE, MQConstant.ROOT_LINK_ROUTERKEY, null, bytes);
+//                log.info("root link:" + page.getName() + "-" + page.getPath() + " push finished");
+                System.out.println("root link:" + page.getName() + "-" + page.getPath() + " push finished");
+                //                if(channel.waitForConfirms()){
+//                    log.info(page.getName() + ":" + page.getPath() + " push finished");
+//                }
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });
+
+        fos.close();
     }
 
     private static ArrayList<RootPageEntity> convertToEntity(Map<String, String> links) {

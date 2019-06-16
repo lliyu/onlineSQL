@@ -5,6 +5,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -23,8 +25,13 @@ public class URLUtils {
         try {
 //            URLConnection urlConnection = url.openConnection();
             InputStream inputStream = response.getEntity().getContent();
+//            File file = new File("G://html//img.txt");
+//            if(!file.exists())
+//                file.createNewFile();
+//            FileOutputStream fos = new FileOutputStream(file);
             byte[] bytes = new byte[1024];
             while (inputStream.read(bytes) != -1) {
+//                fos.write(bytes);
                 sb.append(new String(bytes, "utf-8"));
             }
         } catch (IOException e) {
@@ -49,7 +56,7 @@ public class URLUtils {
         return perfix + "-" + page + suffix;
     }
 
-    public static void main(String[] args) {
-        System.out.println(parseURL(Constant.SOURCEURL + "/albums/CANDY.html", 3));
+    public static void main(String[] args) throws IOException, URISyntaxException {
+        System.out.println(readUrl(Constant.SOURCEURL));
     }
 }

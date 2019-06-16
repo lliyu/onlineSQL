@@ -1,6 +1,6 @@
 package com.prac.onlinesql.net;
 
-import com.prac.onlinesql.net.youguo.entity.PageInfo;
+import com.prac.onlinesql.net.mq.entity.SubLinkPageInfo;
 import com.prac.onlinesql.net.youguo.utils.URLUtils;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 
@@ -26,13 +26,15 @@ public class YouGuoPic {
 
     public static void main(String[] args) throws IOException {
         YouGuoPic youGuoPic = new YouGuoPic();
-
+        long l = System.currentTimeMillis();
+        downloadPic("1","1");
+        System.out.println(System.currentTimeMillis() - l);
     }
 
     public static void picDownNavigat() throws IOException, URISyntaxException {
         YouGuoPic youGuoPic = new YouGuoPic();
         String content = URLUtils.readUrl(SOURCEURL + ALBUMS + "/YOUMI-2.html");
-        ArrayList<PageInfo> pages = youGuoPic.parseHtmlToPage(content);
+        ArrayList<SubLinkPageInfo> pages = youGuoPic.parseHtmlToPage(content);
         pages.stream().forEach(page -> {
             try {
                 int count = youGuoPic.parseDetailPageCount(page);
@@ -61,7 +63,7 @@ public class YouGuoPic {
         });
     }
 
-    public ArrayList<String> parseDetailPageHtml(PageInfo page) throws IOException, URISyntaxException {
+    public ArrayList<String> parseDetailPageHtml(SubLinkPageInfo page) throws IOException, URISyntaxException {
         //正则匹配
         String html = URLUtils.readUrl(SOURCEURL + page.getUri());
         Pattern compile = Pattern.compile("<img.*?src=\"(.*?)\".*?>");
@@ -73,7 +75,7 @@ public class YouGuoPic {
         return imgs;
     }
 
-    public int parseDetailPageCount(PageInfo page) throws IOException, URISyntaxException {
+    public int parseDetailPageCount(SubLinkPageInfo page) throws IOException, URISyntaxException {
         //正则匹配
         String html = URLUtils.readUrl(SOURCEURL + page.getUri());
         Pattern compile = Pattern.compile("<span class=\"count\">.*?(\\d+).*?</span>");
@@ -83,7 +85,7 @@ public class YouGuoPic {
     }
 
     public static void downloadPic(String img, String direct) {
-        // http://www.shu800.com/imgh/70_2602.jpg
+         img = "http://img.94img.com/data/0186/81/15500319275691.jpg";
         //将读取到的logo图片去除  正则匹配比较麻烦 所以在这里做
         if("/themes/sense/images/logo.png".equals(img))
             return;
@@ -91,7 +93,6 @@ public class YouGuoPic {
             System.out.println("downloading:" + direct + "/" + img);
             URL url = new URL(img);
             long l = System.currentTimeMillis();
-            System.out.println(l);
             URLConnection urlConnection = url.openConnection();
             InputStream inputStream = urlConnection.getInputStream();
             int index = img.lastIndexOf("/");
@@ -102,11 +103,9 @@ public class YouGuoPic {
             file = new File("G://file//" + direct + "//" + name);
             if (!file.exists())
                 file.createNewFile();
-            System.out.println(System.currentTimeMillis() - l);
             FileOutputStream fos = new FileOutputStream(file);
             IOUtils.copy(inputStream, fos);
             fos.close();
-            System.out.println(System.currentTimeMillis() - l);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -114,13 +113,13 @@ public class YouGuoPic {
         }
     }
 
-    public ArrayList<PageInfo> parseHtmlToPage(String content) {
+    public ArrayList<SubLinkPageInfo> parseHtmlToPage(String content) {
         //正则匹配
         Pattern compile = Pattern.compile("<span class=\"name\">[\\s\\S]*?<a href=\"(.*?)\">(.*?)</a>");
         Matcher matcher = compile.matcher(content);
-        ArrayList<PageInfo> pages = new ArrayList<>();
+        ArrayList<SubLinkPageInfo> pages = new ArrayList<>();
         while (matcher.find()) {
-            PageInfo page = new PageInfo();
+            SubLinkPageInfo page = new SubLinkPageInfo();
             page.setUri(matcher.group(1));
             page.setName(matcher.group(2).trim());
             pages.add(page);

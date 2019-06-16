@@ -1,6 +1,6 @@
 package com.prac.onlinesql.net.youguo.detail;
 
-import com.prac.onlinesql.net.youguo.entity.PageInfo;
+import com.prac.onlinesql.net.mq.entity.SubLinkPageInfo;
 import com.prac.onlinesql.net.youguo.navigat.ParseNavigator;
 import com.prac.onlinesql.net.youguo.sublink.ParseSubLink;
 import com.prac.onlinesql.net.youguo.utils.Constant;
@@ -53,10 +53,10 @@ public class ParsePicDetail {
             int pageSize = subLink.parseDetailPageCount(content);
             for (int i = 1; i <= pageSize; i++) {
                 content = URLUtils.readUrl(URLUtils.parseURL(Constant.SOURCEURL + next.getValue(), i));
-                ArrayList<PageInfo> infos = subLink.parseHtmlToPage(content);
+                ArrayList<SubLinkPageInfo> infos = subLink.parseHtmlToPage(content);
                 infos.stream().forEach(page -> {
                     try {
-                        int count = parsePicDetail.parseDetailPageCount(page);
+                        int count = parsePicDetail.parseDetailPageCount(null);
                         String uri = page.getUri();
                         String uriFormat = page.getUri().substring(0, page.getUri().lastIndexOf(".")) + "-%d"+ page.getUri().substring(page.getUri().lastIndexOf("."));
                         for (int j = 1; j <= count; j++) {
@@ -66,10 +66,10 @@ public class ParsePicDetail {
                                 page.setUri(uri);
                             if(!finishedDetailHtml.contains(page.getUri())){
                                 finishedDetailHtml.add(page.getUri());
-                                ArrayList<String> imgs = parsePicDetail.parseDetailPageHtml(page);
-                                imgs.stream().forEach(img -> {
-                                    parsePicDetail.downloadPic(img, page.getName(), rootPath);
-                                });
+//                                ArrayList<String> imgs = parsePicDetail.parseDetailPageHtml(page);
+//                                imgs.stream().forEach(img -> {
+//                                    parsePicDetail.downloadPic(img, page.getName(), rootPath);
+//                                });
                             }
                         }
                     } catch (MalformedURLException e) {
@@ -84,9 +84,8 @@ public class ParsePicDetail {
         }
     }
 
-    public ArrayList<String> parseDetailPageHtml(PageInfo page) throws IOException, URISyntaxException {
+    public ArrayList<String> parseDetailPageHtml(String html) throws IOException, URISyntaxException {
         //正则匹配
-        String html = URLUtils.readUrl(Constant.SOURCEURL + page.getUri());
         Pattern compile = Pattern.compile("<img.*?src=\"(.*?)\".*?>");
         Matcher matcher = compile.matcher(html);
         ArrayList<String> imgs = new ArrayList<>();
@@ -100,9 +99,8 @@ public class ParsePicDetail {
         return imgs;
     }
 
-    public int parseDetailPageCount(PageInfo page) throws IOException, URISyntaxException {
+    public int parseDetailPageCount(String html) throws IOException, URISyntaxException {
         //正则匹配
-        String html = URLUtils.readUrl(Constant.SOURCEURL + page.getUri());
         Pattern compile = Pattern.compile("<span class=\"count\">.*?(\\d+).*?");
         Matcher matcher = compile.matcher(html);
         matcher.find();
@@ -116,9 +114,6 @@ public class ParsePicDetail {
         try {
             Thread.sleep(100);
             System.out.println("downloading:" + direct + "/" + img);
-//            URL url = new URL(img);
-//            URLConnection urlConnection = url.openConnection();
-//            InputStream inputStream = urlConnection.getInputStream();
             CloseableHttpResponse response = URLUtils.obtainHttpClientGet(img);
             if(response.getStatusLine().getStatusCode() != 200)
                 return;

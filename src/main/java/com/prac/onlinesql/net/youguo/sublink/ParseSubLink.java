@@ -1,6 +1,6 @@
 package com.prac.onlinesql.net.youguo.sublink;
 
-import com.prac.onlinesql.net.youguo.entity.PageInfo;
+import com.prac.onlinesql.net.mq.entity.SubLinkPageInfo;
 import com.prac.onlinesql.net.youguo.navigat.ParseNavigator;
 import com.prac.onlinesql.net.youguo.utils.Constant;
 import com.prac.onlinesql.net.youguo.utils.FileUtils;
@@ -34,20 +34,20 @@ public class ParseSubLink {
             int pageSize = subLink.parseDetailPageCount(content);
             for (int i = 1; i <= pageSize; i++) {
                 content = URLUtils.readUrl(URLUtils.parseURL(Constant.SOURCEURL + next.getValue(), i));
-                ArrayList<PageInfo> infos = subLink.parseHtmlToPage(content);
+                ArrayList<SubLinkPageInfo> infos = subLink.parseHtmlToPage(content);
                 System.out.println(infos);
             }
             System.out.println();
         }
     }
 
-    public ArrayList<PageInfo> parseHtmlToPage(String content) {
+    public ArrayList<SubLinkPageInfo> parseHtmlToPage(String content) {
         //正则匹配
         Pattern compile = Pattern.compile("<span class=\"name\">[\\s\\S]*?<a href=\"(.*?)\">(.*?)</a>");
         Matcher matcher = compile.matcher(content);
-        ArrayList<PageInfo> pages = new ArrayList<>();
+        ArrayList<SubLinkPageInfo> pages = new ArrayList<>();
         while (matcher.find()) {
-            PageInfo page = new PageInfo();
+            SubLinkPageInfo page = new SubLinkPageInfo();
             page.setUri(matcher.group(1));
             page.setName(matcher.group(2).trim());
             pages.add(page);
